@@ -1,0 +1,835 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TowGrade — Roadside Provider Intelligence Platform</title>
+<meta name="description" content="The verified, anonymous reporting platform where towing operators score roadside providers across 12 categories. Trusted intelligence for OEMs and insurers.">
+<meta name="keywords" content="roadside assistance intelligence, towing provider scores, OEM roadside data, motor club ratings, NSD, Agero, AAA, HONK, Urgently, Allstate RSA">
+<meta name="robots" content="index, follow">
+<meta name="author" content="TowGrade">
+<link rel="canonical" href="https://towgrade.com/">
+<link rel="icon" href="favicon.ico">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=IBM+Plex+Sans:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink:      #0E1117; --ink-90: #1C2333; --ink-70: #3A4358;
+  --ink-50:   #64718A; --ink-30: #9BA7BB; --ink-10: #CDD4DF;
+  --ink-05:   #E8ECF1; --ink-02: #F4F6F8;
+  --paper:    #FAFBFC; --white:  #FFFFFF;
+  --signal:   #1A56C4; --signal-lt: #EBF0FB; --signal-dk: #0F3480;
+  --up:       #1A7A4A; --up-lt:   #E8F5EE;
+  --down:     #C0392B; --down-lt:  #FBEAEA;
+  --warn:     #D97706; --warn-lt:  #FEF3C7;
+  --font-d:   'Playfair Display', Georgia, serif;
+  --font-b:   'IBM Plex Sans', system-ui, sans-serif;
+  --font-m:   'IBM Plex Mono', monospace;
+  --r:4px; --rmd:6px; --rlg:8px;
+  --border:   1px solid var(--ink-10);
+  --sh-sm:    0 1px 3px rgba(14,17,23,.06),0 1px 2px rgba(14,17,23,.04);
+  --sh-md:    0 4px 12px rgba(14,17,23,.08),0 2px 4px rgba(14,17,23,.04);
+  --sh-lg:    0 12px 32px rgba(14,17,23,.12),0 4px 8px rgba(14,17,23,.06);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-b);background:var(--paper);color:var(--ink);font-size:14px;line-height:1.6;-webkit-font-smoothing:antialiased}
+::-webkit-scrollbar{width:4px}::-webkit-scrollbar-track{background:var(--ink-02)}::-webkit-scrollbar-thumb{background:var(--ink-10);border-radius:2px}
+
+/* TOPBAR */
+.topbar{height:56px;background:var(--white);border-bottom:var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 2rem;position:sticky;top:0;z-index:200;box-shadow:var(--sh-sm)}
+.wordmark{font-family:var(--font-d);font-size:20px;font-weight:600;color:var(--ink);letter-spacing:-.3px;user-select:none}
+.wordmark em{color:var(--signal);font-style:normal}
+.wordmark sup{font-family:var(--font-b);font-size:8px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--ink-30);vertical-align:super;margin-left:3px}
+.tr{display:flex;align-items:center;gap:8px}
+.btn{font-family:var(--font-b);font-size:13px;font-weight:500;padding:7px 16px;border-radius:var(--r);cursor:pointer;border:var(--border);background:var(--white);color:var(--ink-70);transition:all .15s;white-space:nowrap}
+.btn:hover{background:var(--ink-02);color:var(--ink)}
+.btn.p{background:var(--signal);color:var(--white);border-color:var(--signal)}
+.btn.p:hover{background:var(--signal-dk);border-color:var(--signal-dk)}
+
+/* SCREENS */
+.screen{display:none}.screen.active{display:block}
+
+/* LANDING */
+.hero{background:var(--white);border-bottom:var(--border)}
+.hero-in{max-width:1180px;margin:0 auto;padding:72px 2rem 64px;display:grid;grid-template-columns:1fr 400px;gap:5rem;align-items:center}
+.eyebrow{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--signal);background:var(--signal-lt);padding:4px 10px;border-radius:2px;margin-bottom:1.25rem}
+.eyebrow::before{content:'';display:block;width:6px;height:6px;border-radius:50%;background:var(--signal)}
+.hero h1{font-family:var(--font-d);font-size:clamp(32px,3.5vw,50px);font-weight:700;line-height:1.08;letter-spacing:-.5px;color:var(--ink);margin-bottom:1.2rem}
+.hero h1 span{color:var(--signal)}
+.hero-lead{font-size:16px;line-height:1.75;color:var(--ink-50);margin-bottom:2rem;max-width:480px}
+.hero-actions{display:flex;gap:10px;flex-wrap:wrap}
+.hero-stats{display:flex;gap:2.5rem;margin-top:2.5rem;padding-top:2.5rem;border-top:var(--border)}
+.hs-val{font-family:var(--font-d);font-size:26px;font-weight:700;color:var(--ink);line-height:1}
+.hs-lbl{font-size:12px;color:var(--ink-50);margin-top:4px}
+.live-panel{background:var(--ink-90);border-radius:var(--rlg);overflow:hidden;box-shadow:var(--sh-lg)}
+.lp-head{padding:14px 20px;border-bottom:1px solid rgba(255,255,255,.07);display:flex;align-items:center;justify-content:space-between}
+.lp-label{font-size:11px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,255,255,.35)}
+.live-dot{display:flex;align-items:center;gap:5px;font-size:11px;color:rgba(255,255,255,.3)}
+.live-dot::before{content:'';width:6px;height:6px;border-radius:50%;background:#22C55E;box-shadow:0 0 0 2px rgba(34,197,94,.25);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
+.lp-row{padding:13px 20px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(255,255,255,.05)}
+.lp-row:last-of-type{border-bottom:none}
+.lp-pname{font-size:14px;font-weight:500;color:rgba(255,255,255,.85)}
+.lp-pmeta{font-size:11px;color:rgba(255,255,255,.3);margin-top:1px}
+.lp-score{font-family:var(--font-m);font-size:20px;font-weight:500}
+.chi{color:#4ADE80}.cmd{color:#FCD34D}.clo{color:#F87171}
+
+/* FEATURES */
+.feat-sec{background:var(--ink-02);border-bottom:var(--border);padding:56px 2rem}
+.feat-in{max-width:1180px;margin:0 auto}
+.sh2{font-family:var(--font-d);font-size:30px;font-weight:600;color:var(--ink);letter-spacing:-.3px;margin-bottom:.6rem}
+.ssub{font-size:15px;color:var(--ink-50);line-height:1.7}
+.sec-ey{font-size:11px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--signal);margin-bottom:.75rem}
+.fg{display:grid;grid-template-columns:repeat(4,1fr);gap:1.5px;background:var(--ink-10);border:1px solid var(--ink-10);border-radius:var(--rlg);overflow:hidden;margin-top:2.5rem}
+.fc{background:var(--white);padding:1.75rem}
+.fc-num{font-family:var(--font-m);font-size:11px;color:var(--ink-30);margin-bottom:1rem}
+.fc-ico{width:34px;height:34px;background:var(--signal-lt);border-radius:var(--r);display:flex;align-items:center;justify-content:center;margin-bottom:1rem;font-size:15px}
+.fc-title{font-weight:600;font-size:14px;margin-bottom:6px;color:var(--ink)}
+.fc-desc{font-size:13px;color:var(--ink-50);line-height:1.65}
+
+/* PROVIDERS */
+.prov-sec{padding:56px 2rem;background:var(--white);border-bottom:var(--border)}
+.prov-in{max-width:1180px;margin:0 auto}
+.pchips{display:flex;flex-wrap:wrap;gap:8px;margin-top:2rem}
+.pchip{display:flex;align-items:center;gap:8px;padding:8px 14px;border:var(--border);border-radius:var(--r);background:var(--white);font-size:13px;font-weight:500;color:var(--ink-70);cursor:pointer;transition:all .15s}
+.pchip:hover{border-color:var(--signal);color:var(--signal);background:var(--signal-lt)}
+.pcs{font-family:var(--font-m);font-size:12px;padding:2px 6px;border-radius:2px;font-weight:500}
+.pcs-hi{background:var(--up-lt);color:var(--up)}.pcs-md{background:var(--warn-lt);color:var(--warn)}.pcs-lo{background:var(--down-lt);color:var(--down)}
+
+/* OEM STRIP */
+.oem-strip{background:var(--ink);padding:56px 2rem;color:var(--white)}
+.oem-in{max-width:1180px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:4rem;align-items:center}
+.oem-ey{font-size:11px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--ink-30);margin-bottom:.75rem}
+.oem-h2{font-family:var(--font-d);font-size:30px;font-weight:600;line-height:1.2;color:var(--white);margin-bottom:1rem}
+.oem-lead{font-size:15px;color:var(--ink-30);line-height:1.7;margin-bottom:1.5rem}
+.oem-pts{display:flex;flex-direction:column;gap:14px}
+.oem-pt{display:flex;gap:12px;align-items:flex-start}
+.oem-chk{width:18px;height:18px;border-radius:50%;background:rgba(26,86,196,.3);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;font-size:10px;color:#4ADE80}
+.oem-pt-txt{font-size:14px;color:var(--ink-10);line-height:1.5}
+.oem-card{background:var(--ink-90);border:1px solid rgba(255,255,255,.08);border-radius:var(--rlg);overflow:hidden}
+.oem-ch{padding:14px 20px;border-bottom:1px solid rgba(255,255,255,.07);font-size:12px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:rgba(255,255,255,.35)}
+.oem-m{padding:13px 20px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid rgba(255,255,255,.05)}
+.oem-m:last-of-type{border-bottom:none}
+.oem-ml{font-size:13px;color:rgba(255,255,255,.45)}
+.oem-mv{font-family:var(--font-m);font-size:14px;font-weight:500}
+
+/* MODAL */
+.overlay{display:none;position:fixed;inset:0;background:rgba(14,17,23,.55);backdrop-filter:blur(2px);z-index:500;align-items:center;justify-content:center;padding:1rem}
+.overlay.open{display:flex}
+.modal{background:var(--white);border:var(--border);border-radius:var(--rlg);box-shadow:var(--sh-lg);width:100%;max-width:480px;max-height:92vh;overflow-y:auto;position:relative}
+.mh{padding:24px 24px 20px;border-bottom:var(--border);margin-bottom:22px}
+.mh h2{font-family:var(--font-d);font-size:22px;font-weight:600;color:var(--ink);margin-bottom:4px}
+.mh p{font-size:13px;color:var(--ink-50)}
+.mb{padding:0 24px 24px}
+.mc{position:absolute;top:14px;right:14px;width:28px;height:28px;border-radius:50%;background:transparent;border:var(--border);cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;color:var(--ink-50);transition:all .15s}
+.mc:hover{background:var(--ink-02);color:var(--ink)}
+.fi{margin-bottom:14px}
+.fi label{display:block;font-size:12px;font-weight:600;color:var(--ink-70);margin-bottom:5px;letter-spacing:.2px}
+.fi input,.fi select,.fi textarea{width:100%;padding:8px 12px;border:var(--border);border-radius:var(--r);font-family:var(--font-b);font-size:14px;color:var(--ink);background:var(--white);outline:none;transition:border-color .15s;appearance:none}
+.fi input:focus,.fi select:focus,.fi textarea:focus{border-color:var(--signal);box-shadow:0 0 0 3px rgba(26,86,196,.1)}
+.fi textarea{resize:vertical;min-height:80px;line-height:1.5}
+.fr{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.bf{width:100%;padding:10px;font-family:var(--font-b);font-size:14px;font-weight:600;border-radius:var(--r);cursor:pointer;border:var(--border);background:var(--white);color:var(--ink);transition:all .15s;margin-top:4px}
+.bf.p{background:var(--signal);color:var(--white);border-color:var(--signal)}.bf.p:hover{background:var(--signal-dk)}
+.bf:not(.p):hover{background:var(--ink-02)}
+.dl{display:flex;align-items:center;gap:10px;margin:14px 0;font-size:12px;color:var(--ink-30)}
+.dl::before,.dl::after{content:'';flex:1;height:1px;background:var(--ink-10)}
+.la{background:transparent;border:none;color:var(--signal);font-size:13px;cursor:pointer;text-decoration:underline;font-family:var(--font-b);padding:0}
+.ib{background:var(--signal-lt);border:1px solid rgba(26,86,196,.15);border-radius:var(--r);padding:11px 13px;font-size:13px;color:var(--signal-dk);line-height:1.6;margin-bottom:16px;display:flex;gap:8px}
+
+/* APP */
+.app-wrap{display:grid;grid-template-columns:220px 1fr;min-height:calc(100vh - 56px)}
+.sidebar{background:var(--white);border-right:var(--border);padding:1.25rem 0;position:sticky;top:56px;height:calc(100vh - 56px);overflow-y:auto}
+.su{padding:0 1rem 1.25rem;border-bottom:var(--border);margin-bottom:1rem}
+.av{width:32px;height:32px;background:var(--signal);color:var(--white);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;margin-bottom:8px}
+.un{font-size:13px;font-weight:600;color:var(--ink)}
+.uc{font-size:12px;color:var(--ink-50)}
+.sl{font-size:10px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--ink-30);padding:0 1rem;margin:1rem 0 .4rem}
+.si{display:flex;align-items:center;gap:9px;padding:7px 1rem;font-size:13px;color:var(--ink-50);cursor:pointer;border:none;background:transparent;text-align:left;width:100%;border-left:2px solid transparent;transition:all .1s;font-family:var(--font-b)}
+.si:hover{background:var(--ink-02);color:var(--ink)}
+.si.active{background:var(--signal-lt);color:var(--signal);font-weight:500;border-left-color:var(--signal)}
+.sico{width:16px;text-align:center;font-size:13px;flex-shrink:0}
+.main{background:var(--ink-02)}
+.panel{display:none;padding:2rem 2.5rem}.panel.active{display:block}
+.ph{margin-bottom:1.75rem}
+.pt{font-family:var(--font-d);font-size:26px;font-weight:600;color:var(--ink);letter-spacing:-.3px}
+.ps{font-size:13px;color:var(--ink-50);margin-top:4px}
+
+/* KPIS */
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:1.5rem}
+.kc{background:var(--white);border:var(--border);border-radius:var(--rmd);padding:1.25rem;box-shadow:var(--sh-sm)}
+.kl{font-size:11px;font-weight:600;letter-spacing:.5px;text-transform:uppercase;color:var(--ink-30);margin-bottom:6px}
+.kv{font-family:var(--font-d);font-size:28px;font-weight:700;color:var(--ink);line-height:1}
+.km{font-size:12px;color:var(--ink-50);margin-top:6px}
+.ku{color:var(--up)}.kd{color:var(--down)}
+
+/* CARD */
+.card{background:var(--white);border:var(--border);border-radius:var(--rmd);box-shadow:var(--sh-sm);overflow:hidden}
+.ch{padding:1rem 1.25rem;border-bottom:var(--border);display:flex;align-items:center;justify-content:space-between}
+.ct{font-size:14px;font-weight:600;color:var(--ink)}
+.cm{font-size:12px;color:var(--ink-50)}
+.cb{padding:1.25rem}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:1.25rem;margin-bottom:1.25rem}
+
+/* PROVIDER ROWS */
+.prow{display:flex;align-items:center;gap:12px;padding:12px 1.25rem;border-bottom:var(--border);cursor:pointer;transition:background .1s}
+.prow:last-child{border-bottom:none}.prow:hover{background:var(--ink-02)}
+.pl{width:36px;height:36px;border-radius:var(--r);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:var(--white);flex-shrink:0;letter-spacing:.5px}
+.pn{font-size:13px;font-weight:600;color:var(--ink)}
+.pt2{font-size:11px;color:var(--ink-30);margin-top:1px}
+.psc{font-family:var(--font-m);font-size:18px;font-weight:500;min-width:42px;text-align:right}
+.pbt{height:4px;background:var(--ink-05);border-radius:2px;overflow:hidden}
+.pbf{height:100%;border-radius:2px}
+
+/* ALERTS */
+.ai{padding:12px 1.25rem;border-bottom:var(--border);display:flex;gap:10px;align-items:flex-start}
+.ai:last-child{border-bottom:none}
+.ad{width:8px;height:8px;border-radius:50%;flex-shrink:0;margin-top:4px}
+.at{font-size:13px;font-weight:500;color:var(--ink);margin-bottom:2px}
+.adesc{font-size:12px;color:var(--ink-50);line-height:1.5}
+
+/* RATING */
+.rtabs{display:flex;border-bottom:var(--border);background:var(--ink-02);overflow-x:auto}
+.rtab{font-size:12px;font-weight:500;padding:10px 16px;cursor:pointer;border:none;background:transparent;color:var(--ink-50);border-bottom:2px solid transparent;margin-bottom:-1px;transition:all .15s;font-family:var(--font-b);white-space:nowrap}
+.rtab.active{color:var(--signal);border-bottom-color:var(--signal);background:var(--white)}
+.rtab:hover:not(.active){color:var(--ink);background:var(--ink-05)}
+.rtp{display:none;padding:1.5rem 1.25rem}.rtp.active{display:block}
+.rgrid{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem}
+.rl{display:flex;justify-content:space-between;align-items:center;font-size:13px;font-weight:500;color:var(--ink-70);margin-bottom:6px}
+.rscore{font-family:var(--font-m);font-size:13px;font-weight:500;color:var(--signal);background:var(--signal-lt);padding:1px 7px;border-radius:2px;min-width:46px;text-align:center}
+.stars{display:flex;gap:3px;margin-bottom:6px}
+.star{font-size:18px;cursor:pointer;color:var(--ink-10);transition:color .1s;line-height:1;background:none;border:none;padding:2px}
+.star.on{color:#B8860B}
+.na{width:100%;margin-top:6px;padding:7px 10px;border:var(--border);border-radius:var(--r);font-family:var(--font-b);font-size:12px;color:var(--ink);background:var(--ink-02);outline:none;resize:vertical;min-height:60px;transition:border-color .15s;line-height:1.5}
+.na:focus{border-color:var(--signal);background:var(--white)}
+.na::placeholder{color:var(--ink-30)}
+.priv-row{display:flex;align-items:center;gap:12px;padding:12px 1.25rem;background:var(--signal-lt);border-bottom:1px solid rgba(26,86,196,.12)}
+.tw{position:relative;width:38px;height:20px;flex-shrink:0}
+.tw input{opacity:0;width:0;height:0;position:absolute}
+.tbg{position:absolute;inset:0;background:var(--ink-10);border-radius:10px;cursor:pointer;transition:background .2s}
+.tbg::after{content:'';position:absolute;width:14px;height:14px;left:3px;top:3px;background:var(--white);border-radius:50%;transition:transform .2s;box-shadow:0 1px 3px rgba(0,0,0,.15)}
+.tw input:checked~.tbg{background:var(--signal)}
+.tw input:checked~.tbg::after{transform:translateX(18px)}
+.pt3{font-size:13px;font-weight:500;color:var(--signal-dk)}
+.ps2{font-size:12px;color:var(--signal)}
+
+/* COMPARISON TABLE */
+.ct2{width:100%;border-collapse:collapse}
+.ct2 th{font-size:11px;font-weight:600;letter-spacing:.5px;text-transform:uppercase;color:var(--ink-30);padding:10px 12px;text-align:left;border-bottom:var(--border);background:var(--ink-02);white-space:nowrap}
+.ct2 td{padding:11px 12px;border-bottom:1px solid var(--ink-05);font-size:13px;vertical-align:middle}
+.ct2 tr:last-child td{border-bottom:none}
+.ct2 tr:hover td{background:var(--ink-02)}
+.tscore{font-family:var(--font-m);font-size:13px;font-weight:500;display:flex;align-items:center;gap:6px}
+.tbar{width:40px;height:3px;background:var(--ink-05);border-radius:2px;overflow:hidden}
+.tbarf{height:100%;border-radius:2px}
+
+/* SCOREBOARD */
+.bgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:1.25rem}
+.bc{background:var(--white);border:var(--border);border-radius:var(--rmd);overflow:hidden;box-shadow:var(--sh-sm);transition:box-shadow .2s,transform .2s}
+.bc:hover{box-shadow:var(--sh-md);transform:translateY(-2px)}
+.bch{padding:1rem 1.25rem;border-bottom:var(--border);display:flex;align-items:flex-start;justify-content:space-between}
+.bn{font-size:16px;font-weight:600;color:var(--ink)}.btype{font-size:11px;color:var(--ink-30);margin-top:2px}
+.bov{text-align:right}
+.boscore{font-family:var(--font-d);font-size:32px;font-weight:700;line-height:1}
+.boslbl{font-size:11px;color:var(--ink-30)}
+.bmet{padding:1rem 1.25rem;display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.bmn{font-size:11px;color:var(--ink-50);margin-bottom:3px}
+.bmbr{display:flex;align-items:center;gap:6px}
+.bmb{flex:1;height:4px;background:var(--ink-05);border-radius:2px;overflow:hidden}
+.bmbf{height:100%;border-radius:2px}
+.bmv{font-family:var(--font-m);font-size:11px;color:var(--ink-50);min-width:26px}
+.bfoot{padding:10px 1.25rem;border-top:var(--border);background:var(--ink-02);display:flex;align-items:center;justify-content:space-between}
+.brev{font-size:12px;color:var(--ink-30)}
+.tbadge{font-size:11px;font-weight:600;padding:3px 8px;border-radius:2px}
+.tup{background:var(--up-lt);color:var(--up)}.tdn{background:var(--down-lt);color:var(--down)}.tfl{background:var(--ink-05);color:var(--ink-50)}
+
+/* OEM PANEL */
+.oemrh{background:var(--ink);color:var(--white);padding:1.5rem 1.25rem;display:flex;align-items:flex-start;justify-content:space-between}
+.oemrt{font-family:var(--font-d);font-size:18px;font-weight:600;margin-bottom:4px}
+.oemrs{font-size:12px;color:rgba(255,255,255,.4)}
+.ig{display:grid;grid-template-columns:repeat(3,1fr);gap:1.25rem;margin-bottom:1.25rem}
+.ic{background:var(--white);border:var(--border);border-radius:var(--rmd);padding:1.25rem;box-shadow:var(--sh-sm)}
+.icl{font-size:11px;font-weight:600;letter-spacing:.5px;text-transform:uppercase;color:var(--ink-30);margin-bottom:8px}
+.icv{font-family:var(--font-d);font-size:28px;font-weight:700;color:var(--ink);margin-bottom:4px}
+.icd{font-size:12px;color:var(--ink-50);line-height:1.5}
+.ifl{font-size:12px;font-weight:600;padding:3px 8px;border-radius:2px;margin-top:8px;display:inline-block}
+.fr{background:var(--down-lt);color:var(--down)}.fam{background:var(--warn-lt);color:var(--warn)}.fg2{background:var(--up-lt);color:var(--up)}
+.finding{display:flex;gap:14px;padding:14px 1.25rem;border-bottom:var(--border)}
+.finding:last-child{border-bottom:none}
+.fn{font-family:var(--font-m);font-size:12px;font-weight:500;color:var(--ink-30);min-width:28px;padding-top:1px}
+.fti{font-size:14px;font-weight:600;color:var(--ink);margin-bottom:4px}
+.fb{font-size:13px;color:var(--ink-50);line-height:1.65}
+
+/* ISSUES */
+.irow{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:var(--border)}
+.irow:last-child{border-bottom:none}
+.iname{font-size:13px;color:var(--ink-70);flex:1}
+.ibar{width:80px;height:4px;background:var(--ink-05);border-radius:2px;overflow:hidden}
+.ibarf{height:100%;border-radius:2px}
+.ipct{font-family:var(--font-m);font-size:12px;color:var(--ink-50);min-width:32px;text-align:right}
+
+/* BADGES */
+.bpub{background:var(--up-lt);color:var(--up);font-size:11px;font-weight:600;padding:2px 7px;border-radius:2px}
+.bpriv{background:var(--ink-05);color:var(--ink-50);font-size:11px;font-weight:600;padding:2px 7px;border-radius:2px}
+
+/* TOAST */
+.toast{position:fixed;bottom:1.5rem;right:1.5rem;background:var(--ink);color:var(--white);border-radius:var(--rmd);padding:14px 18px;box-shadow:var(--sh-lg);z-index:9999;transform:translateY(80px);opacity:0;transition:all .3s cubic-bezier(.34,1.56,.64,1);pointer-events:none;max-width:320px;border-left:3px solid var(--signal)}
+.toast.show{transform:translateY(0);opacity:1}
+.ttt{font-size:13px;font-weight:600;margin-bottom:2px}
+.ttm{font-size:12px;color:rgba(255,255,255,.5)}
+
+@media(max-width:900px){.hero-in{grid-template-columns:1fr}.live-panel{display:none}.fg{grid-template-columns:1fr 1fr}.oem-in{grid-template-columns:1fr}.app-wrap{grid-template-columns:1fr}.sidebar{display:none}.kpis{grid-template-columns:1fr 1fr}.rgrid{grid-template-columns:1fr}.ig{grid-template-columns:1fr}}
+</style>
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://towgrade.com/">
+<meta property="og:title" content="TowGrade — Roadside Provider Intelligence">
+<meta property="og:description" content="Verified intelligence on roadside assistance providers, scored by towing operators who work with them every day. Trusted by OEMs and insurers.">
+<meta property="og:site_name" content="TowGrade">
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="TowGrade — Roadside Provider Intelligence">
+<meta name="twitter:description" content="Verified intelligence on roadside assistance providers, scored by towing operators who work with them every day.">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "TowGrade",
+  "url": "https://towgrade.com",
+  "description": "Roadside provider intelligence platform. Towing operators anonymously score providers across 12 performance categories. OEMs and insurers access verified aggregate data for network decisions.",
+  "applicationCategory": "BusinessApplication",
+  "operatingSystem": "Web",
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" }
+}
+</script>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="wordmark">Tow<em>Grade</em><sup>™</sup></div>
+  <div class="tr">
+    <div id="authBtns" style="display:flex;gap:8px">
+      <button class="btn" onclick="open_('loginO')">Sign in</button>
+      <button class="btn p" onclick="open_('registerO')">Register your company</button>
+    </div>
+    <div id="userBtns" style="display:none;gap:8px;align-items:center">
+      <span id="topLbl" style="font-size:13px;color:var(--ink-50)"></span>
+      <button class="btn" onclick="doLogout()">Sign out</button>
+    </div>
+  </div>
+</header>
+
+<!-- LANDING -->
+<div class="screen active" id="scLanding">
+  <section class="hero">
+    <div class="hero-in">
+      <div>
+        <div class="eyebrow">Industry Intelligence Platform</div>
+        <h1>The data that holds<br><span>providers accountable.</span></h1>
+        <p class="hero-lead">TowGrade is a verified, anonymous reporting platform where towing company owners grade roadside assistance providers across 12 operational categories — generating the intelligence OEMs and insurers need to manage their networks.</p>
+        <div class="hero-actions">
+          <button class="btn p" style="font-size:14px;padding:9px 20px" onclick="open_('registerO')">Register your company →</button>
+          <button class="btn" style="font-size:14px;padding:9px 20px" onclick="open_('oemO')">OEM &amp; Insurer access</button>
+        </div>
+        <div class="hero-stats">
+          <div><div class="hs-val">1,240+</div><div class="hs-lbl">Verified operators</div></div>
+          <div><div class="hs-val">18,400+</div><div class="hs-lbl">Provider reviews</div></div>
+          <div><div class="hs-val">14</div><div class="hs-lbl">Providers indexed</div></div>
+          <div><div class="hs-val">100%</div><div class="hs-lbl">Operator anonymity</div></div>
+        </div>
+      </div>
+      <div class="live-panel">
+        <div class="lp-head"><span class="lp-label">Current scores</span><span class="live-dot">Live</span></div>
+        <div class="lp-row"><div><div class="lp-pname">NSD</div><div class="lp-pmeta">Motor Club · 987 reviews</div></div><span class="lp-score chi">7.8</span></div>
+        <div class="lp-row"><div><div class="lp-pname">AAA</div><div class="lp-pmeta">Motor Club · 5,102 reviews</div></div><span class="lp-score chi">7.1</span></div>
+        <div class="lp-row"><div><div class="lp-pname">Allstate RSA</div><div class="lp-pmeta">Insurer-Direct · 623 reviews</div></div><span class="lp-score cmd">6.8</span></div>
+        <div class="lp-row"><div><div class="lp-pname">Agero</div><div class="lp-pmeta">Motor Club · 2,847 reviews</div></div><span class="lp-score cmd">6.4</span></div>
+        <div class="lp-row"><div><div class="lp-pname">Urgently</div><div class="lp-pmeta">Digital Platform · 1,209 reviews</div></div><span class="lp-score clo">5.2</span></div>
+        <div class="lp-row"><div><div class="lp-pname">HONK</div><div class="lp-pmeta">Digital Platform · 743 reviews</div></div><span class="lp-score clo">4.9</span></div>
+        <div style="padding:12px 20px;border-top:1px solid rgba(255,255,255,.07)"><button class="btn p" style="width:100%;font-size:13px" onclick="open_('registerO')">View full scoreboard →</button></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="feat-sec">
+    <div class="feat-in">
+      <div style="max-width:560px">
+        <div class="sec-ey">Platform overview</div>
+        <div class="sh2">Designed for operators. Built for accountability.</div>
+      </div>
+      <div class="fg">
+        <div class="fc"><div class="fc-num">01</div><div class="fc-ico">🔒</div><div class="fc-title">Complete anonymity</div><div class="fc-desc">Your identity is never shared with any provider. Public data is aggregated by region and fleet size only.</div></div>
+        <div class="fc"><div class="fc-num">02</div><div class="fc-ico">★</div><div class="fc-title">12-category scoring</div><div class="fc-desc">Rate pay rates, payment speed, damage claims, dispatch accuracy, tech reliability, account management, and more.</div></div>
+        <div class="fc"><div class="fc-num">03</div><div class="fc-ico">◎</div><div class="fc-title">Visibility control</div><div class="fc-desc">Toggle each review between private and public. Narrative comments are always private — only scores are aggregated.</div></div>
+        <div class="fc"><div class="fc-num">04</div><div class="fc-ico">📊</div><div class="fc-title">OEM intelligence</div><div class="fc-desc">Aggregated reports delivered to OEMs and insurers, driving contractual accountability at scale.</div></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="prov-sec">
+    <div class="prov-in">
+      <div class="sec-ey">Covered providers</div>
+      <div class="sh2">All major motor clubs &amp; digital platforms</div>
+      <div class="ssub">Don't see your provider? Submit an addition request from your operator dashboard.</div>
+      <div class="pchips">
+        <div class="pchip">Agero<span class="pcs pcs-md">6.4</span></div>
+        <div class="pchip">AAA<span class="pcs pcs-hi">7.1</span></div>
+        <div class="pchip">Urgently<span class="pcs pcs-lo">5.2</span></div>
+        <div class="pchip">NSD<span class="pcs pcs-hi">7.8</span></div>
+        <div class="pchip">HONK<span class="pcs pcs-lo">4.9</span></div>
+        <div class="pchip">Allstate RSA<span class="pcs pcs-md">6.8</span></div>
+        <div class="pchip">Cross Country<span class="pcs pcs-md">6.1</span></div>
+        <div class="pchip">Nation Safe Drivers<span class="pcs pcs-md">6.5</span></div>
+        <div class="pchip">USAA Roadside<span class="pcs pcs-hi">7.4</span></div>
+        <div class="pchip">Auto Club Group<span class="pcs pcs-md">7.0</span></div>
+        <div class="pchip">Roadside Masters<span class="pcs pcs-md">5.9</span></div>
+        <div class="pchip" style="border-style:dashed;color:var(--signal)">+ Submit provider</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="oem-strip">
+    <div class="oem-in">
+      <div>
+        <div class="oem-ey">For OEMs &amp; Insurers</div>
+        <div class="oem-h2">The field data your provider contracts are missing.</div>
+        <p class="oem-lead">TowGrade aggregates verified operator experience into structured intelligence — giving procurement teams and claims directors an independent view of roadside network performance that provider self-reporting cannot match.</p>
+        <div class="oem-pts">
+          <div class="oem-pt"><div class="oem-chk">✓</div><div class="oem-pt-txt">Payment speed, damage claim handling, and operator retention risk — by provider, region, and period</div></div>
+          <div class="oem-pt"><div class="oem-chk">✓</div><div class="oem-pt-txt">Quarterly trend reports and real-time alerts on significant score movements</div></div>
+          <div class="oem-pt"><div class="oem-chk">✓</div><div class="oem-pt-txt">Structured for direct integration into RFP scoring and vendor SLA frameworks</div></div>
+        </div>
+        <button class="btn" style="margin-top:1.5rem;color:var(--white);border-color:rgba(255,255,255,.2);background:rgba(255,255,255,.07);font-size:14px;padding:9px 20px" onclick="open_('oemO')">Request data access →</button>
+      </div>
+      <div class="oem-card">
+        <div class="oem-ch">Sample — Q4 2024 Provider Report</div>
+        <div class="oem-m"><span class="oem-ml">Network avg. payment window</span><span class="oem-mv clo">38.4 days</span></div>
+        <div class="oem-m"><span class="oem-ml">SLA breach rate (&gt;21 days)</span><span class="oem-mv clo">64%</span></div>
+        <div class="oem-m"><span class="oem-ml">Damage claim dispute rate</span><span class="oem-mv cmd">62%</span></div>
+        <div class="oem-m"><span class="oem-ml">Operator attrition risk (6mo)</span><span class="oem-mv cmd">28%</span></div>
+        <div class="oem-m"><span class="oem-ml">Top performer — overall</span><span class="oem-mv chi">NSD · 7.8</span></div>
+        <div class="oem-m"><span class="oem-ml">Lowest performer — overall</span><span class="oem-mv clo">HONK · 4.9</span></div>
+        <div style="padding:14px 20px;border-top:1px solid rgba(255,255,255,.07)"><button class="btn p" style="width:100%;font-size:13px" onclick="open_('oemO')">Access full reports →</button></div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- APP -->
+<div class="screen" id="scApp">
+  <div class="app-wrap">
+    <nav class="sidebar">
+      <div class="su">
+        <div class="av" id="sAv">JD</div>
+        <div class="un" id="sNm">John Doe</div>
+        <div class="uc" id="sCo">ABC Towing</div>
+      </div>
+      <div class="sl">Operator</div>
+      <button class="si active" onclick="sp('overview',this)"><span class="sico">▦</span>Overview</button>
+      <button class="si" onclick="sp('rate',this)"><span class="sico">★</span>Rate a Provider</button>
+      <button class="si" onclick="sp('reviews',this)"><span class="sico">≡</span>My Reviews</button>
+      <div class="sl">Intelligence</div>
+      <button class="si" onclick="sp('reports',this)"><span class="sico">◈</span>Comparison Reports</button>
+      <button class="si" onclick="sp('oem',this)"><span class="sico">⬡</span>OEM Intelligence</button>
+      <button class="si" onclick="sp('scoreboard',this)"><span class="sico">◉</span>Public Scoreboard</button>
+      <div style="height:2rem"></div>
+      <button class="si" onclick="doLogout()"><span class="sico">←</span>Sign out</button>
+    </nav>
+
+    <main class="main">
+
+      <!-- OVERVIEW -->
+      <div class="panel active" id="panel-overview">
+        <div class="ph"><div class="pt">Good morning, <span id="gName">John</span></div><div class="ps" id="todayD"></div></div>
+        <div class="kpis">
+          <div class="kc"><div class="kl">Providers rated</div><div class="kv">4</div><div class="km ku">↑ 1 added this month</div></div>
+          <div class="kc"><div class="kl">Reviews submitted</div><div class="kv">12</div><div class="km ku">↑ 3 this month</div></div>
+          <div class="kc"><div class="kl">Public contributions</div><div class="kv">3</div><div class="km" style="color:var(--ink-50)">Feeding community data</div></div>
+          <div class="kc"><div class="kl">Avg score given</div><div class="kv">6.2</div><div class="km kd">↓ 0.3 below community avg</div></div>
+        </div>
+        <div class="two">
+          <div class="card">
+            <div class="ch"><span class="ct">Your provider ratings</span><span class="cm">4 providers</span></div>
+            <div class="prow" onclick="sp('rate',null)"><div class="pl" style="background:#2B5BA8">AG</div><div style="flex:1"><div class="pn">Agero</div><div class="pt2">Motor Club · last reviewed 3 days ago</div></div><div style="max-width:70px;flex:1"><div class="pbt"><div class="pbf" style="width:61%;background:#D97706"></div></div></div><div class="psc" style="color:#D97706">6.1</div></div>
+            <div class="prow"><div class="pl" style="background:#1A5496">AA</div><div style="flex:1"><div class="pn">AAA</div><div class="pt2">Motor Club · last reviewed 1 week ago</div></div><div style="max-width:70px;flex:1"><div class="pbt"><div class="pbf" style="width:74%;background:#1A7A4A"></div></div></div><div class="psc" style="color:#1A7A4A">7.4</div></div>
+            <div class="prow"><div class="pl" style="background:#8B2020">UR</div><div style="flex:1"><div class="pn">Urgently</div><div class="pt2">Digital Platform · last reviewed 2 weeks ago</div></div><div style="max-width:70px;flex:1"><div class="pbt"><div class="pbf" style="width:48%;background:#C0392B"></div></div></div><div class="psc" style="color:#C0392B">4.8</div></div>
+            <div class="prow"><div class="pl" style="background:#5B2080">HK</div><div style="flex:1"><div class="pn">HONK</div><div class="pt2">Digital Platform · last reviewed 1 month ago</div></div><div style="max-width:70px;flex:1"><div class="pbt"><div class="pbf" style="width:50%;background:#C0392B"></div></div></div><div class="psc" style="color:#C0392B">5.0</div></div>
+          </div>
+          <div class="card">
+            <div class="ch"><span class="ct">Network alerts</span><span style="background:var(--down-lt);color:var(--down);font-size:11px;font-weight:600;padding:2px 7px;border-radius:2px">3 active</span></div>
+            <div class="ai"><div class="ad" style="background:var(--down)"></div><div><div class="at">Agero — Payment delays at 47-day avg</div><div class="adesc">47 operators reporting 45+ day windows nationally. Consider flagging in your review.</div></div></div>
+            <div class="ai"><div class="ad" style="background:var(--warn)"></div><div><div class="at">HONK — App reliability declining</div><div class="adesc">28% of operators in Southeast reporting dispatch platform outages over the past 30 days.</div></div></div>
+            <div class="ai"><div class="ad" style="background:var(--up)"></div><div><div class="at">NSD — Rate increase effective Jan 1</div><div class="adesc">Base hook rate adjusted upward in 12 states. Consider updating your NSD ratings to reflect new terms.</div></div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- RATE -->
+      <div class="panel" id="panel-rate">
+        <div class="ph"><div class="pt">Rate a Provider</div><div class="ps">Your verified review is anonymized before contributing to any aggregate</div></div>
+        <div class="card" style="margin-bottom:1.25rem">
+          <div class="cb" style="padding-bottom:1rem">
+            <div class="fr">
+              <div class="fi"><label>Provider</label>
+                <select id="provSel" onchange="onProv()">
+                  <option value="">— Select a provider —</option>
+                  <option value="agero">Agero</option><option value="aaa">AAA</option>
+                  <option value="urgently">Urgently</option><option value="nsd">NSD</option>
+                  <option value="honk">HONK Technologies</option><option value="allstate">Allstate Roadside Services</option>
+                  <option value="cross">Cross Country Motor Club</option><option value="nsdr">Nation Safe Drivers</option>
+                  <option value="usaa">USAA Roadside</option><option value="acg">Auto Club Group</option>
+                  <option value="rm">Roadside Masters</option>
+                </select>
+              </div>
+              <div class="fi"><label>Review period</label>
+                <select><option>Last 30 days</option><option>Last 90 days</option><option>Last 6 months</option><option>Last 12 months</option><option>General / all-time</option></select>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div id="rForm" style="display:none">
+          <div class="card" style="margin-bottom:1.25rem">
+            <div class="priv-row">
+              <label class="tw"><input type="checkbox" id="pubT"><div class="tbg"></div></label>
+              <div><div class="pt3">Contribute numeric scores to the public scoreboard</div><div class="ps2">Written comments and your identity are always private — only averaged scores are aggregated</div></div>
+            </div>
+            <div class="rtabs">
+              <button class="rtab active" onclick="srt('comp',this)">Compensation</button>
+              <button class="rtab" onclick="srt('ops',this)">Operations</button>
+              <button class="rtab" onclick="srt('support',this)">Support</button>
+              <button class="rtab" onclick="srt('tech',this)">Technology</button>
+              <button class="rtab" onclick="srt('final',this)">Final Assessment</button>
+            </div>
+            <div class="rtp active" id="rtp-comp">
+              <div class="rgrid">
+                <div><div class="rl">Pay rate adequacy<span class="rscore" id="rs-payrate">—</span></div><div class="stars" id="sr-payrate"></div><textarea class="na" placeholder="Notes on pay rates — stays private..."></textarea></div>
+                <div><div class="rl">Payment speed / time to pay<span class="rscore" id="rs-paytime">—</span></div><div class="stars" id="sr-paytime"></div><textarea class="na" placeholder="Average days to payment? Specific issues?"></textarea></div>
+                <div><div class="rl">Collections process<span class="rscore" id="rs-collections">—</span></div><div class="stars" id="sr-collections"></div><textarea class="na" placeholder="Ease of recovering outstanding amounts..."></textarea></div>
+                <div><div class="rl">Invoice accuracy<span class="rscore" id="rs-invoice">—</span></div><div class="stars" id="sr-invoice"></div><textarea class="na" placeholder="Correct amounts, proper itemization..."></textarea></div>
+              </div>
+            </div>
+            <div class="rtp" id="rtp-ops">
+              <div class="rgrid">
+                <div><div class="rl">Damage claim handling<span class="rscore" id="rs-damage">—</span></div><div class="stars" id="sr-damage"></div><textarea class="na" placeholder="Fairness and speed of damage investigations..."></textarea></div>
+                <div><div class="rl">Dispatch accuracy<span class="rscore" id="rs-dispatch">—</span></div><div class="stars" id="sr-dispatch"></div><textarea class="na" placeholder="Jobs dispatched with correct, complete details?"></textarea></div>
+                <div><div class="rl">Contract and rate fairness<span class="rscore" id="rs-contract">—</span></div><div class="stars" id="sr-contract"></div><textarea class="na" placeholder="Fair terms? Surprise fees? Unilateral changes?"></textarea></div>
+                <div><div class="rl">GPS / ETA accuracy<span class="rscore" id="rs-gps">—</span></div><div class="stars" id="sr-gps"></div><textarea class="na" placeholder="Reliability of location tracking and ETAs..."></textarea></div>
+              </div>
+            </div>
+            <div class="rtp" id="rtp-support">
+              <div class="rgrid">
+                <div><div class="rl">Responsiveness to problems<span class="rscore" id="rs-responsive">—</span></div><div class="stars" id="sr-responsive"></div><textarea class="na" placeholder="How quickly and effectively does the provider resolve issues?"></textarea></div>
+                <div><div class="rl">Communication quality<span class="rscore" id="rs-comms">—</span></div><div class="stars" id="sr-comms"></div><textarea class="na" placeholder="Clarity, professionalism, reliability of communications..."></textarea></div>
+                <div><div class="rl">Account manager quality<span class="rscore" id="rs-acct">—</span></div><div class="stars" id="sr-acct"></div><textarea class="na" placeholder="Is your rep accessible, knowledgeable, an advocate?"></textarea></div>
+                <div><div class="rl">Dispute resolution<span class="rscore" id="rs-dispute">—</span></div><div class="stars" id="sr-dispute"></div><textarea class="na" placeholder="Fairness and speed of formal dispute resolution..."></textarea></div>
+              </div>
+            </div>
+            <div class="rtp" id="rtp-tech">
+              <div class="rgrid">
+                <div><div class="rl">App / portal reliability<span class="rscore" id="rs-app">—</span></div><div class="stars" id="sr-app"></div><textarea class="na" placeholder="Crashes, bugs, outages, login issues..."></textarea></div>
+                <div><div class="rl">Billing portal usability<span class="rscore" id="rs-billing">—</span></div><div class="stars" id="sr-billing"></div><textarea class="na" placeholder="How easy is invoice tracking and submission?"></textarea></div>
+              </div>
+            </div>
+            <div class="rtp" id="rtp-final">
+              <div class="rgrid" style="margin-bottom:1.25rem">
+                <div><div class="rl">Overall satisfaction<span class="rscore" id="rs-overall">—</span></div><div class="stars" id="sr-overall"></div></div>
+                <div><div class="rl">Would recommend to peers<span class="rscore" id="rs-recommend">—</span></div><div class="stars" id="sr-recommend"></div></div>
+              </div>
+              <div class="fi"><label>Narrative summary (always private — never shared with the provider)</label>
+                <textarea id="narrative" style="min-height:100px;width:100%;padding:9px 12px;border:var(--border);border-radius:var(--r);font-family:var(--font-b);font-size:13px;color:var(--ink);background:var(--ink-02);outline:none;resize:vertical;line-height:1.6" placeholder="What would you want an OEM or insurer to understand about working with this provider? Your identity will never be attached to this text."></textarea>
+              </div>
+            </div>
+          </div>
+          <div style="display:flex;justify-content:flex-end;gap:10px">
+            <button class="btn" onclick="clearForm()">Clear form</button>
+            <button class="btn p" onclick="submitReview()">Submit review →</button>
+          </div>
+        </div>
+        <div id="rPrompt" style="text-align:center;padding:3rem;color:var(--ink-30)">
+          <div style="font-size:32px;margin-bottom:.75rem">★</div>
+          <div style="font-size:15px;font-weight:500;color:var(--ink-50);margin-bottom:6px">Select a provider to begin</div>
+          <div style="font-size:13px">Choose from any motor club or digital dispatch platform you work with</div>
+        </div>
+      </div>
+
+      <!-- REVIEWS -->
+      <div class="panel" id="panel-reviews">
+        <div class="ph"><div class="pt">My Reviews</div><div class="ps">All submitted reviews — manage visibility at any time</div></div>
+        <div class="card">
+          <div class="ch"><span class="ct">Submitted reviews</span><span class="cm">4 total · 2 public</span></div>
+          <table class="ct2" style="width:100%">
+            <thead><tr><th>Provider</th><th>Date</th><th>Overall</th><th>Pay</th><th>Speed</th><th>Claims</th><th>Comms</th><th>Visibility</th><th></th></tr></thead>
+            <tbody>
+              <tr><td><strong>Agero</strong></td><td style="color:var(--ink-30);font-size:12px">Dec 14 2024</td><td><span style="font-family:var(--font-m);font-weight:600;color:#D97706">6.0</span></td><td style="font-family:var(--font-m)">5</td><td style="font-family:var(--font-m)">4</td><td style="font-family:var(--font-m)">6</td><td style="font-family:var(--font-m)">7</td><td><span class="bpub">Public</span></td><td><button class="btn" style="padding:4px 10px;font-size:12px" onclick="toast_('Edit mode','Full edit UI available in account settings.')">Edit</button></td></tr>
+              <tr><td><strong>Agero</strong></td><td style="color:var(--ink-30);font-size:12px">Nov 02 2024</td><td><span style="font-family:var(--font-m);font-weight:600;color:#C0392B">5.8</span></td><td style="font-family:var(--font-m)">5</td><td style="font-family:var(--font-m)">5</td><td style="font-family:var(--font-m)">5</td><td style="font-family:var(--font-m)">6</td><td><span class="bpriv">Private</span></td><td><button class="btn" style="padding:4px 10px;font-size:12px" onclick="toast_('Edit mode','Full edit UI available in account settings.')">Edit</button></td></tr>
+              <tr><td><strong>AAA</strong></td><td style="color:var(--ink-30);font-size:12px">Dec 01 2024</td><td><span style="font-family:var(--font-m);font-weight:600;color:#1A7A4A">7.4</span></td><td style="font-family:var(--font-m)">8</td><td style="font-family:var(--font-m)">7</td><td style="font-family:var(--font-m)">8</td><td style="font-family:var(--font-m)">7</td><td><span class="bpub">Public</span></td><td><button class="btn" style="padding:4px 10px;font-size:12px" onclick="toast_('Edit mode','Full edit UI available in account settings.')">Edit</button></td></tr>
+              <tr><td><strong>Urgently</strong></td><td style="color:var(--ink-30);font-size:12px">Nov 18 2024</td><td><span style="font-family:var(--font-m);font-weight:600;color:#C0392B">4.8</span></td><td style="font-family:var(--font-m)">4</td><td style="font-family:var(--font-m)">3</td><td style="font-family:var(--font-m)">5</td><td style="font-family:var(--font-m)">5</td><td><span class="bpriv">Private</span></td><td><button class="btn" style="padding:4px 10px;font-size:12px" onclick="toast_('Edit mode','Full edit UI available in account settings.')">Edit</button></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- REPORTS -->
+      <div class="panel" id="panel-reports">
+        <div class="ph"><div class="pt">Comparison Reports</div><div class="ps">Anonymous aggregate data from all 1,240+ TowGrade operators</div></div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:1.25rem">
+          <button class="btn p" style="padding:5px 12px;font-size:12px">All providers</button>
+          <button class="btn" style="padding:5px 12px;font-size:12px">Motor clubs</button>
+          <button class="btn" style="padding:5px 12px;font-size:12px">Digital platforms</button>
+          <button class="btn" style="padding:5px 12px;font-size:12px">Southeast</button>
+          <button class="btn" style="padding:5px 12px;font-size:12px">Midwest</button>
+          <button class="btn" style="padding:5px 12px;font-size:12px">National</button>
+        </div>
+        <div class="card" style="margin-bottom:1.25rem">
+          <div class="ch"><span class="ct">Category scores by provider</span><span class="cm">Based on 18,400+ verified reviews</span></div>
+          <table class="ct2" id="rptTbl"></table>
+        </div>
+        <div class="two">
+          <div class="card">
+            <div class="ch"><span class="ct">Top reported issues</span><span class="cm">All providers combined</span></div>
+            <div style="padding:0 1.25rem">
+              <div class="irow"><span class="iname">Slow payment (&gt;30 days)</span><div class="ibar"><div class="ibarf" style="width:78%;background:#C0392B"></div></div><span class="ipct">78%</span></div>
+              <div class="irow"><span class="iname">Damage claim disputes</span><div class="ibar"><div class="ibarf" style="width:62%;background:#D97706"></div></div><span class="ipct">62%</span></div>
+              <div class="irow"><span class="iname">App / portal reliability</span><div class="ibar"><div class="ibarf" style="width:55%;background:#D97706"></div></div><span class="ipct">55%</span></div>
+              <div class="irow"><span class="iname">Unresponsive account manager</span><div class="ibar"><div class="ibarf" style="width:48%;background:#1A56C4"></div></div><span class="ipct">48%</span></div>
+              <div class="irow"><span class="iname">Rate / invoice discrepancies</span><div class="ibar"><div class="ibarf" style="width:41%;background:#1A56C4"></div></div><span class="ipct">41%</span></div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="ch"><span class="ct">6-month score trends</span></div>
+            <table class="ct2">
+              <thead><tr><th>Provider</th><th>Score</th><th>Change</th><th></th></tr></thead>
+              <tbody>
+                <tr><td>NSD</td><td style="font-family:var(--font-m)">7.8</td><td style="color:var(--up);font-family:var(--font-m)">+0.3</td><td><span class="tbadge tup">↑ Improving</span></td></tr>
+                <tr><td>AAA</td><td style="font-family:var(--font-m)">7.1</td><td style="color:var(--up);font-family:var(--font-m)">+0.4</td><td><span class="tbadge tup">↑ Improving</span></td></tr>
+                <tr><td>Allstate RSA</td><td style="font-family:var(--font-m)">6.8</td><td style="color:var(--ink-30);font-family:var(--font-m)">+0.1</td><td><span class="tbadge tfl">→ Stable</span></td></tr>
+                <tr><td>Agero</td><td style="font-family:var(--font-m)">6.4</td><td style="color:var(--down);font-family:var(--font-m)">−0.6</td><td><span class="tbadge tdn">↓ Declining</span></td></tr>
+                <tr><td>Urgently</td><td style="font-family:var(--font-m)">5.2</td><td style="color:var(--down);font-family:var(--font-m)">−0.8</td><td><span class="tbadge tdn">↓ Declining</span></td></tr>
+                <tr><td>HONK</td><td style="font-family:var(--font-m)">4.9</td><td style="color:var(--down);font-family:var(--font-m)">−1.1</td><td><span class="tbadge tdn">↓ Declining</span></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- OEM -->
+      <div class="panel" id="panel-oem">
+        <div class="ph"><div class="pt">OEM Intelligence</div><div class="ps">Anonymized aggregate findings structured for OEM and insurer use</div></div>
+        <div class="card" style="margin-bottom:1.25rem">
+          <div class="oemrh">
+            <div><div class="oemrt">TowGrade Network Intelligence Report — Q4 2024</div><div class="oemrs">1,240 verified operators · 14 providers · 18,400+ reviews · Oct–Dec 2024</div></div>
+            <button class="btn" style="background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.15);color:var(--white);font-size:13px;flex-shrink:0" onclick="toast_('Report exported','OEM PDF report queued for download.')">Export PDF</button>
+          </div>
+          <div style="padding:1.25rem">
+            <div class="ig" style="margin-bottom:1.25rem">
+              <div class="ic"><div class="icl">Network avg. payment window</div><div class="icv" style="color:var(--down)">38.4 days</div><div class="icd">Target SLA: 21 days. 64% of providers in breach.</div><span class="ifl fr">Critical threshold exceeded</span></div>
+              <div class="ic"><div class="icl">Damage claim dispute rate</div><div class="icv" style="color:var(--warn)">62%</div><div class="icd">Up 8 points from Q3. Agero and HONK are primary drivers.</div><span class="ifl fam">Worsening trend</span></div>
+              <div class="ic"><div class="icl">Operator attrition risk</div><div class="icv" style="color:var(--warn)">28%</div><div class="icd">Operators considering exiting ≥1 network in next 6 months.</div><span class="ifl fam">Monitoring required</span></div>
+            </div>
+            <div class="ig">
+              <div class="ic"><div class="icl">Top overall performer</div><div class="icv" style="color:var(--up)">NSD — 7.8</div><div class="icd">Consistent high scores across all categories. 19-day avg payment window.</div><span class="ifl fg2">Benchmark standard</span></div>
+              <div class="ic"><div class="icl">Lowest overall performer</div><div class="icv" style="color:var(--down)">HONK — 4.9</div><div class="icd">App reliability (4.5) and payment speed (3.8) represent serious operational risk.</div><span class="ifl fr">Immediate attention needed</span></div>
+              <div class="ic"><div class="icl">Biggest decline (6 months)</div><div class="icv" style="color:var(--down)">HONK −1.1</div><div class="icd">Fastest declining provider across all categories with accelerating operator departure.</div><span class="ifl fr">Escalation recommended</span></div>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="ch"><span class="ct">Key findings &amp; recommended actions</span></div>
+          <div class="finding"><span class="fn">F-01</span><div><div class="fti">Payment infrastructure failing at scale</div><div class="fb">Average payment windows have stretched from 28 to 38 days over 12 months. Three of the five largest providers now routinely exceed 45 days, creating cash flow crises for small fleet operators. Recommended: mandate 21-day payment SLAs with financial penalties in all provider contracts.</div></div></div>
+          <div class="finding"><span class="fn">F-02</span><div><div class="fti">Digital platforms significantly underperforming motor clubs</div><div class="fb">App-based platforms score 1.9 points lower than motor clubs on average across all categories. Technology investment is not keeping pace with dispatch volume. Recommended: require quarterly reliability reporting and minimum uptime SLAs from digital platform providers.</div></div></div>
+          <div class="finding"><span class="fn">F-03</span><div><div class="fti">Southeast region showing systemic Agero underperformance</div><div class="fb">Agero scores 1.2 points lower in the Southeast than its national average. Recommended: request regional breakdown in Agero's next contract review and consider region-specific SLAs.</div></div></div>
+          <div class="finding"><span class="fn">F-04</span><div><div class="fti">NSD and AAA demonstrate the viable best-practice model</div><div class="fb">Both providers consistently score above 7.0 across all categories. Shared characteristics: dedicated account managers, sub-25-day payment windows, and transparent damage claim processes. Recommended: use as the RFP benchmark standard for all future procurement cycles.</div></div></div>
+        </div>
+      </div>
+
+      <!-- SCOREBOARD -->
+      <div class="panel" id="panel-scoreboard">
+        <div class="ph"><div class="pt">Public Scoreboard</div><div class="ps">Aggregate scores from verified operators · anonymized · updated in real time</div></div>
+        <div class="bgrid" id="bGrid"></div>
+      </div>
+
+    </main>
+  </div>
+</div>
+
+<!-- REGISTER -->
+<div class="overlay" id="registerO">
+  <div class="modal">
+    <button class="mc" onclick="close_('registerO')">✕</button>
+    <div class="mh"><h2>Register your company</h2><p>Free for verified towing operators. Your identity is never shared with any provider.</p></div>
+    <div class="mb">
+      <div class="ib">🔒 TowGrade never shares your company name or contact information with any roadside assistance provider. Public data is anonymized to region and fleet size only.</div>
+      <div class="fr"><div class="fi"><label>First name</label><input id="rF" type="text" placeholder="John"></div><div class="fi"><label>Last name</label><input id="rL" type="text" placeholder="Doe"></div></div>
+      <div class="fi"><label>Company name</label><input id="rC" type="text" placeholder="ABC Towing &amp; Recovery LLC"></div>
+      <div class="fr">
+        <div class="fi"><label>State</label><select id="rS"><option value="">— Select —</option><option>Alabama</option><option>Arizona</option><option>Arkansas</option><option>California</option><option>Colorado</option><option>Florida</option><option>Georgia</option><option>Illinois</option><option>Indiana</option><option>Michigan</option><option>New York</option><option>North Carolina</option><option>Ohio</option><option>Pennsylvania</option><option>Tennessee</option><option>Texas</option><option>Virginia</option></select></div>
+        <div class="fi"><label>Fleet size</label><select><option>1–3 trucks</option><option>4–10 trucks</option><option>11–25 trucks</option><option>26–50 trucks</option><option>50+ trucks</option></select></div>
+      </div>
+      <div class="fi"><label>Business email</label><input id="rE" type="email" placeholder="john@abctowing.com"></div>
+      <div class="fi"><label>Password</label><input type="password" placeholder="Create a secure password"></div>
+      <button class="bf p" onclick="doRegister()">Create account →</button>
+      <div class="dl">already have an account?</div>
+      <button class="bf" onclick="close_('registerO');open_('loginO')">Sign in instead</button>
+    </div>
+  </div>
+</div>
+
+<!-- LOGIN -->
+<div class="overlay" id="loginO">
+  <div class="modal">
+    <button class="mc" onclick="close_('loginO')">✕</button>
+    <div class="mh"><h2>Sign in</h2><p>Access your TowGrade operator dashboard</p></div>
+    <div class="mb">
+      <div class="fi"><label>Email</label><input type="email" placeholder="your@email.com"></div>
+      <div class="fi"><label>Password</label><input type="password" placeholder="Your password"></div>
+      <button class="bf p" onclick="doLogin()">Sign in →</button>
+      <div style="text-align:center;margin-top:12px"><button class="la" onclick="demoLogin()">Use demo account (no sign-up required)</button></div>
+      <div class="dl">new to TowGrade?</div>
+      <button class="bf" onclick="close_('loginO');open_('registerO')">Register your company</button>
+    </div>
+  </div>
+</div>
+
+<!-- OEM -->
+<div class="overlay" id="oemO">
+  <div class="modal">
+    <button class="mc" onclick="close_('oemO')">✕</button>
+    <div class="mh"><h2>OEM &amp; Insurer access</h2><p>Request data access for procurement and vendor management</p></div>
+    <div class="mb">
+      <div class="ib">Subscriber reports include quarterly provider scorecards, trend alerts, regional breakdowns, and structured data exports designed for direct use in RFP scoring and vendor SLA management.</div>
+      <div class="fi"><label>Organization</label><input type="text" placeholder="Ford Motor Company"></div>
+      <div class="fi"><label>Your role</label><select><option>Roadside Assistance Manager</option><option>Procurement / Vendor Management</option><option>Insurance Claims Director</option><option>Operations VP</option><option>Other</option></select></div>
+      <div class="fi"><label>Business email</label><input type="email" placeholder="name@organization.com"></div>
+      <button class="bf p" onclick="close_('oemO');toast_('Request received','Our team will contact you within one business day with access and pricing details.')">Request access →</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"><div class="ttt" id="ttt"></div><div class="ttm" id="ttm"></div></div>
+
+<script>
+const PROVS = [
+  {id:'agero',  name:'Agero',       type:'Motor Club',      abbr:'AG',col:'#2B5BA8',
+   s:{payRate:5.2,paySpeed:4.8,damage:5.1,dispatch:6.8,comms:6.1,app:6.5,overall:6.4},reviews:2847,trend:'dn'},
+  {id:'aaa',   name:'AAA',          type:'Motor Club',      abbr:'AA',col:'#1A5496',
+   s:{payRate:7.8,paySpeed:7.2,damage:6.8,dispatch:7.4,comms:7.6,app:6.8,overall:7.1},reviews:5102,trend:'up'},
+  {id:'urg',   name:'Urgently',     type:'Digital Platform',abbr:'UR',col:'#8B2020',
+   s:{payRate:4.5,paySpeed:4.2,damage:4.6,dispatch:5.5,comms:5.2,app:5.0,overall:5.2},reviews:1209,trend:'dn'},
+  {id:'nsd',   name:'NSD',          type:'Motor Club',      abbr:'NS',col:'#1A6640',
+   s:{payRate:8.1,paySpeed:7.8,damage:7.2,dispatch:8.0,comms:8.1,app:7.2,overall:7.8},reviews:987, trend:'up'},
+  {id:'honk',  name:'HONK',         type:'Digital Platform',abbr:'HK',col:'#5B2080',
+   s:{payRate:4.1,paySpeed:3.8,damage:4.0,dispatch:5.2,comms:4.8,app:4.5,overall:4.9},reviews:743, trend:'dn'},
+  {id:'all',   name:'Allstate RSA', type:'Insurer-Direct',  abbr:'AL',col:'#8B6914',
+   s:{payRate:7.0,paySpeed:6.5,damage:6.3,dispatch:6.9,comms:7.0,app:6.7,overall:6.8},reviews:623, trend:'fl'},
+];
+const R={};
+function sc(v){return v>=7.5?'#1A7A4A':v>=6?'#D97706':'#C0392B'}
+
+function open_(id){document.getElementById(id).classList.add('open')}
+function close_(id){document.getElementById(id).classList.remove('open')}
+document.querySelectorAll('.overlay').forEach(o=>o.addEventListener('click',e=>{if(e.target===o)o.classList.remove('open')}));
+
+function toast_(t,m){
+  const el=document.getElementById('toast');
+  document.getElementById('ttt').textContent=t;document.getElementById('ttm').textContent=m;
+  el.classList.add('show');setTimeout(()=>el.classList.remove('show'),3800);
+}
+
+function doRegister(){
+  const f=document.getElementById('rF').value.trim()||'John';
+  const l=document.getElementById('rL').value.trim()||'Doe';
+  const c=document.getElementById('rC').value.trim()||'Your Towing Co.';
+  close_('registerO');enter(f,l,c);
+}
+function doLogin(){close_('loginO');enter('John','Doe','ABC Towing');}
+function demoLogin(){close_('loginO');enter('Demo','User','Demo Towing LLC');}
+
+function enter(f,l,c){
+  document.getElementById('scLanding').classList.remove('active');
+  document.getElementById('scApp').classList.add('active');
+  document.getElementById('authBtns').style.display='none';
+  document.getElementById('userBtns').style.display='flex';
+  document.getElementById('topLbl').textContent=f+' · '+c;
+  const ini=((f[0]||'')+(l[0]||'')).toUpperCase();
+  document.getElementById('sAv').textContent=ini;
+  document.getElementById('sNm').textContent=f+' '+l;
+  document.getElementById('sCo').textContent=c;
+  document.getElementById('gName').textContent=f;
+  document.getElementById('todayD').textContent=new Date().toLocaleDateString('en-US',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+  buildRT();buildBoard();buildStars();
+}
+
+function doLogout(){
+  document.getElementById('scApp').classList.remove('active');
+  document.getElementById('scLanding').classList.add('active');
+  document.getElementById('authBtns').style.display='flex';
+  document.getElementById('userBtns').style.display='none';
+}
+
+function sp(id,el){
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.si').forEach(s=>s.classList.remove('active'));
+  const p=document.getElementById('panel-'+id);
+  if(p)p.classList.add('active');
+  if(el)el.classList.add('active');
+}
+
+function buildStars(){
+  ['payrate','paytime','collections','invoice','damage','dispatch','contract','gps','responsive','comms','acct','dispute','app','billing','overall','recommend'].forEach(f=>{
+    const w=document.getElementById('sr-'+f);if(!w)return;w.innerHTML='';
+    for(let i=1;i<=10;i++){const b=document.createElement('button');b.className='star';b.textContent='★';b.dataset.val=i;b.onclick=()=>setR(f,i);w.appendChild(b);}
+  });
+}
+function setR(f,v){
+  R[f]=v;
+  const lb=document.getElementById('rs-'+f);if(lb)lb.textContent=v+'/10';
+  const w=document.getElementById('sr-'+f);
+  if(w)w.querySelectorAll('.star').forEach(s=>s.classList.toggle('on',parseInt(s.dataset.val)<=v));
+}
+function onProv(){
+  const v=document.getElementById('provSel').value;
+  document.getElementById('rForm').style.display=v?'block':'none';
+  document.getElementById('rPrompt').style.display=v?'none':'block';
+}
+function srt(id,el){
+  document.querySelectorAll('.rtp').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.rtab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('rtp-'+id).classList.add('active');el.classList.add('active');
+}
+function clearForm(){
+  Object.keys(R).forEach(k=>delete R[k]);
+  document.querySelectorAll('.star').forEach(s=>s.classList.remove('on'));
+  document.querySelectorAll('[id^="rs-"]').forEach(e=>e.textContent='—');
+  document.querySelectorAll('.na,#narrative').forEach(t=>t.value='');
+  document.getElementById('provSel').value='';onProv();
+}
+function submitReview(){
+  if(!document.getElementById('provSel').value){toast_('Select a provider','Please choose a provider before submitting.');return;}
+  if(Object.keys(R).length<3){toast_('Add more ratings','Please rate at least 3 categories before submitting.');return;}
+  toast_('Review submitted','Your review has been recorded. Thank you for contributing.');
+  clearForm();setTimeout(()=>sp('reviews',document.querySelector('.si:nth-child(4)')),600);
+}
+
+function buildRT(){
+  const cats=[['payRate','Pay Rate'],['paySpeed','Pay Speed'],['damage','Claims'],['dispatch','Dispatch'],['comms','Comms'],['app','Tech'],['overall','Overall']];
+  const th='<thead><tr><th>Provider</th>'+cats.map(c=>`<th>${c[1]}</th>`).join('')+'</tr></thead>';
+  const tb='<tbody>'+PROVS.map(p=>`<tr><td><strong style="font-size:13px">${p.name}</strong><br><span style="font-size:11px;color:var(--ink-30)">${p.type}</span></td>${cats.map(([k])=>{const v=p.s[k];return`<td><div class="tscore"><div class="tbar"><div class="tbarf" style="width:${v*10}%;background:${sc(v)}"></div></div><span style="color:${sc(v)}">${v.toFixed(1)}</span></div></td>`;}).join('')}</tr>`).join('')+'</tbody>';
+  document.getElementById('rptTbl').innerHTML=th+tb;
+}
+
+function buildBoard(){
+  const tl={up:'↑ Improving',dn:'↓ Declining',fl:'→ Stable'};
+  const tc={up:'tup',dn:'tdn',fl:'tfl'};
+  const mets=[['payRate','Pay Rate'],['paySpeed','Pay Speed'],['damage','Claims'],['dispatch','Dispatch'],['comms','Comms'],['app','Technology']];
+  document.getElementById('bGrid').innerHTML=PROVS.map(p=>`
+    <div class="bc">
+      <div class="bch"><div><div class="bn">${p.name}</div><div class="btype">${p.type}</div></div>
+        <div class="bov"><div class="boscore" style="color:${sc(p.s.overall)}">${p.s.overall.toFixed(1)}</div><div class="boslbl">/ 10 overall</div></div>
+      </div>
+      <div class="bmet">${mets.map(([k,n])=>`<div><div class="bmn">${n}</div><div class="bmbr"><div class="bmb"><div class="bmbf" style="width:${p.s[k]*10}%;background:${sc(p.s[k])}"></div></div><span class="bmv">${p.s[k].toFixed(1)}</span></div></div>`).join('')}</div>
+      <div class="bfoot"><span class="brev">${p.reviews.toLocaleString()} verified reviews</span><span class="tbadge ${tc[p.trend]}">${tl[p.trend]}</span></div>
+    </div>`).join('');
+}
+</script>
+</body>
+</html>
