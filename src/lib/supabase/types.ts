@@ -160,6 +160,7 @@ export type Database = {
       }
       operators: {
         Row: {
+          auth_user_id: string | null
           company_name: string
           created_at: string
           dot_number: string | null
@@ -169,7 +170,7 @@ export type Database = {
           id: string
           last_login_at: string | null
           last_name: string
-          password_hash: string
+          password_hash: string | null
           state: string
           updated_at: string
           verification_status: string
@@ -177,6 +178,7 @@ export type Database = {
           verified_by: string | null
         }
         Insert: {
+          auth_user_id?: string | null
           company_name: string
           created_at?: string
           dot_number?: string | null
@@ -186,7 +188,7 @@ export type Database = {
           id?: string
           last_login_at?: string | null
           last_name: string
-          password_hash: string
+          password_hash?: string | null
           state: string
           updated_at?: string
           verification_status?: string
@@ -194,6 +196,7 @@ export type Database = {
           verified_by?: string | null
         }
         Update: {
+          auth_user_id?: string | null
           company_name?: string
           created_at?: string
           dot_number?: string | null
@@ -203,7 +206,7 @@ export type Database = {
           id?: string
           last_login_at?: string | null
           last_name?: string
-          password_hash?: string
+          password_hash?: string | null
           state?: string
           updated_at?: string
           verification_status?: string

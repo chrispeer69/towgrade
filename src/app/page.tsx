@@ -32,13 +32,13 @@ export default async function LandingPage() {
               insurers need to manage their networks.
             </p>
             <div className="hero-actions">
-              <a
-                href="#"
+              <Link
+                href="/register"
                 className="btn p"
                 style={{ fontSize: 14, padding: "9px 20px" }}
               >
                 Register your company →
-              </a>
+              </Link>
               <a
                 href="#"
                 className="btn"

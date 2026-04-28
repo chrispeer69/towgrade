@@ -468,6 +468,166 @@ a { color: inherit; text-decoration: none; }
 
 
 /* ---------------------------------------------------------------------------
+   FORM CARD — ported from prototypes/towgrade.html register/login modal
+   (.fi / .fr / .bf / .dl / .la / .ib), reused on the dedicated /register route
+   ------------------------------------------------------------------------- */
+.form-shell {
+  max-width: 520px;
+  margin: 0 auto;
+  padding: 4rem 2rem 5rem;
+}
+.form-card {
+  background: var(--white);
+  border: var(--border);
+  border-radius: var(--rlg);
+  box-shadow: var(--sh-md);
+  overflow: hidden;
+}
+.form-head {
+  padding: 24px 24px 20px;
+  border-bottom: var(--border);
+}
+.form-head h1 {
+  font-family: var(--font-d);
+  font-size: 26px;
+  font-weight: 600;
+  letter-spacing: -0.3px;
+  color: var(--ink);
+  margin-bottom: 6px;
+}
+.form-head p { font-size: 13px; color: var(--ink-50); line-height: 1.55; }
+.form-body { padding: 24px; }
+
+/* Form fields (lifted verbatim from prototype) */
+.fi { margin-bottom: 14px; }
+.fi label {
+  display: block;
+  font-size: 12px; font-weight: 600;
+  color: var(--ink-70);
+  margin-bottom: 5px;
+  letter-spacing: 0.2px;
+}
+.fi input, .fi select, .fi textarea {
+  width: 100%;
+  padding: 8px 12px;
+  border: var(--border);
+  border-radius: var(--r);
+  font-family: var(--font-b);
+  font-size: 14px;
+  color: var(--ink);
+  background: var(--white);
+  outline: none;
+  transition: border-color 0.15s, box-shadow 0.15s;
+  appearance: none;
+}
+.fi input:focus, .fi select:focus, .fi textarea:focus {
+  border-color: var(--signal);
+  box-shadow: 0 0 0 3px rgba(26,86,196,.1);
+}
+.fi-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+.fi-help { font-size: 11px; color: var(--ink-30); margin-top: 5px; }
+.fi-err {
+  font-size: 12px; color: var(--down);
+  margin-top: 5px; line-height: 1.45;
+}
+
+/* Buttons inside form cards */
+.bf {
+  width: 100%;
+  padding: 10px;
+  font-family: var(--font-b);
+  font-size: 14px; font-weight: 600;
+  border-radius: var(--r);
+  cursor: pointer;
+  border: var(--border);
+  background: var(--white);
+  color: var(--ink);
+  transition: all 0.15s;
+  margin-top: 4px;
+}
+.bf.p { background: var(--signal); color: var(--white); border-color: var(--signal); }
+.bf.p:hover { background: var(--signal-dk); }
+.bf:not(.p):hover { background: var(--ink-02); }
+.bf:disabled { opacity: 0.55; cursor: not-allowed; }
+
+/* "or" divider + secondary link */
+.dl {
+  display: flex; align-items: center;
+  gap: 10px;
+  margin: 14px 0;
+  font-size: 12px; color: var(--ink-30);
+}
+.dl::before, .dl::after {
+  content: ''; flex: 1; height: 1px; background: var(--ink-10);
+}
+.la {
+  background: transparent;
+  border: none;
+  color: var(--signal);
+  font-size: 13px;
+  cursor: pointer;
+  text-decoration: underline;
+  font-family: var(--font-b);
+  padding: 0;
+}
+
+/* Info box (signal-blue notice — privacy disclaimer on register form) */
+.ib {
+  background: var(--signal-lt);
+  border: 1px solid rgba(26,86,196,.15);
+  border-radius: var(--r);
+  padding: 11px 13px;
+  font-size: 13px;
+  color: var(--signal-dk);
+  line-height: 1.6;
+  margin-bottom: 16px;
+  display: flex; gap: 8px;
+}
+
+/* Form-level error (top of card) and success state */
+.form-err {
+  margin: 0 24px 16px;
+  border: 1px solid var(--down);
+  background: var(--down-lt);
+  color: var(--down);
+  border-radius: var(--r);
+  padding: 10px 13px;
+  font-size: 13px; line-height: 1.5;
+}
+.form-success {
+  padding: 32px 28px;
+  text-align: center;
+}
+.form-success-mark {
+  width: 48px; height: 48px;
+  border-radius: 50%;
+  background: var(--up-lt);
+  color: var(--up);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 24px;
+  margin: 0 auto 14px;
+}
+.form-success h2 {
+  font-family: var(--font-d);
+  font-size: 22px; font-weight: 600;
+  color: var(--ink);
+  margin-bottom: 8px;
+}
+.form-success p {
+  font-size: 14px;
+  color: var(--ink-50);
+  line-height: 1.6;
+  max-width: 380px;
+  margin: 0 auto 6px;
+}
+.form-success strong { color: var(--ink); font-weight: 600; }
+
+
+/* ---------------------------------------------------------------------------
    FOOTER (minor addition — no analogue in prototype)
    ------------------------------------------------------------------------- */
 .site-foot {
