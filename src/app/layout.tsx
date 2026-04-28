@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { Playfair_Display, IBM_Plex_Sans, IBM_Plex_Mono } from "next/font/google";
 import "./globals.css";
 
@@ -37,7 +38,34 @@ export default function RootLayout({
       lang="en"
       className={`${playfair.variable} ${plexSans.variable} ${plexMono.variable}`}
     >
-      <body>{children}</body>
+      <body>
+        <header className="topbar">
+          <Link href="/" className="wordmark">
+            Tow<em>Grade</em>
+            <sup>™</sup>
+          </Link>
+          <div className="tr">
+            <Link href="/scoreboard" className="btn">
+              Public Scoreboard
+            </Link>
+          </div>
+        </header>
+        {children}
+        <footer className="site-foot">
+          <div className="site-foot-in">
+            <div className="site-foot-mark">
+              Tow<em>Grade</em>
+              <sup>™</sup>
+            </div>
+            <div className="site-foot-tag">
+              Verified · Anonymous · Editorial
+            </div>
+            <div className="site-foot-copy">
+              © 2026 TowGrade. The data that holds providers accountable.
+            </div>
+          </div>
+        </footer>
+      </body>
     </html>
   );
 }
