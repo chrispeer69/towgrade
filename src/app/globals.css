@@ -1,49 +1,64 @@
+/* TowGrade design system — ported from prototypes/towgrade.html §4 of CLAUDE.md */
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Ink scale */
+  --ink:      #0E1117;
+  --ink-90:   #1C2333;
+  --ink-70:   #3A4358;
+  --ink-50:   #64718A;
+  --ink-30:   #9BA7BB;
+  --ink-10:   #CDD4DF;
+  --ink-05:   #E8ECF1;
+  --ink-02:   #F4F6F8;
+
+  /* Surfaces */
+  --paper:    #FAFBFC;
+  --white:    #FFFFFF;
+
+  /* Signal blue */
+  --signal:    #1A56C4;
+  --signal-lt: #EBF0FB;
+  --signal-dk: #0F3480;
+
+  /* Up / Down / Warn */
+  --up:     #1A7A4A;
+  --up-lt:  #E8F5EE;
+  --down:   #C0392B;
+  --down-lt:#FBEAEA;
+  --warn:   #D97706;
+  --warn-lt:#FEF3C7;
+
+  /* Star */
+  --star: #B8860B;
+
+  /* Geometry */
+  --r:    4px;
+  --rmd:  6px;
+  --rlg:  8px;
+  --border: 1px solid var(--ink-10);
+
+  /* Shadows */
+  --sh-sm: 0 1px 3px rgba(14,17,23,.06), 0 1px 2px rgba(14,17,23,.04);
+  --sh-md: 0 4px 12px rgba(14,17,23,.08), 0 2px 4px rgba(14,17,23,.04);
+  --sh-lg: 0 12px 32px rgba(14,17,23,.12), 0 4px 8px rgba(14,17,23,.06);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
+* { box-sizing: border-box; margin: 0; padding: 0; }
 
-html {
-  height: 100%;
-}
+html, body { height: 100%; }
 
-html,
 body {
-  max-width: 100vw;
-  overflow-x: hidden;
-}
-
-body {
-  min-height: 100%;
-  display: flex;
-  flex-direction: column;
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-b);
+  background: var(--paper);
+  color: var(--ink);
+  font-size: 14px;
+  line-height: 1.6;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-* {
-  box-sizing: border-box;
-  padding: 0;
-  margin: 0;
-}
+a { color: inherit; text-decoration: none; }
 
-a {
-  color: inherit;
-  text-decoration: none;
-}
-
-@media (prefers-color-scheme: dark) {
-  html {
-    color-scheme: dark;
-  }
-}
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: var(--ink-02); }
+::-webkit-scrollbar-thumb { background: var(--ink-10); border-radius: 2px; }
