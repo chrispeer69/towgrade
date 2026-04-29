@@ -63,17 +63,30 @@ export async function registerOperator(
   // round-trip the verifier and breaks email confirmation.
   const supabase = await createClient();
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
+  console.log("[REGISTER] NEXT_PUBLIC_SITE_URL raw:", process.env.NEXT_PUBLIC_SITE_URL);
+  console.log("[REGISTER] siteUrl resolved:", siteUrl);
 
-  const { data: signup, error: signupError } = await supabase.auth.signUp({
+  const emailRedirectTo = `${siteUrl}/auth/callback`;
+  console.log("[REGISTER] emailRedirectTo:", emailRedirectTo);
+
+  const signUpOptions = {
     email,
     password,
     options: {
       // No query string — Supabase's URI allowlist matches strictly, and the
       // /auth/callback route handler already defaults `next` to /dashboard.
-      emailRedirectTo: `${siteUrl}/auth/callback`,
+      emailRedirectTo,
       data: { first_name, last_name, company_name },
     },
-  });
+  };
+  console.log("[REGISTER] signUp options:", JSON.stringify({ ...signUpOptions, password: "[REDACTED]" }, null, 2));
+
+  const { data: signup, error: signupError } = await supabase.auth.signUp(signUpOptions);
+
+  console.log("[REGISTER] signUp error:", signupError);
+  console.log("[REGISTER] signUp returned user id:", signup?.user?.id ?? null);
+  console.log("[REGISTER] signUp returned user email:", signup?.user?.email ?? null);
+  console.log("[REGISTER] signUp returned session:", signup?.session ? "present" : "null");
 
   if (signupError) {
     // "User already registered" comes back as 422 — surface it cleanly.
