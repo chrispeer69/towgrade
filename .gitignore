@@ -62,3 +62,6 @@ supabase/.branches/
 
 # Test coverage extras
 .nyc_output/
+
+# Founder-only progress reports (delivered ad-hoc, never tracked)
+TOWGRADE_PROGRESS_*.docx
