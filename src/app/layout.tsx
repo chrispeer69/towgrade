@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Playfair_Display, IBM_Plex_Sans, IBM_Plex_Mono } from "next/font/google";
 import "./globals.css";
+import HeaderLinks from "./HeaderLinks";
 
 const playfair = Playfair_Display({
   subsets: ["latin"],
@@ -44,14 +45,7 @@ export default function RootLayout({
             Tow<em>Grade</em>
             <sup>™</sup>
           </Link>
-          <div className="tr">
-            <Link href="/scoreboard" className="btn">
-              Public Scoreboard
-            </Link>
-            <Link href="/login" className="btn">
-              Sign In
-            </Link>
-          </div>
+          <HeaderLinks />
         </header>
         {children}
         <footer className="site-foot">

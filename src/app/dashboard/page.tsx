@@ -1,5 +1,4 @@
-import { redirect } from "next/navigation";
-import { createClient } from "@/lib/supabase/server";
+import { getOperator } from "@/lib/operator";
 
 export const metadata = {
   title: "Dashboard — TowGrade",
@@ -18,27 +17,10 @@ const STATUS_CLASS: Record<string, string> = {
 };
 
 export default async function DashboardPage() {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  if (!user) {
-    redirect("/");
-  }
-
-  // operators_self_read RLS policy lets the authenticated user fetch their
-  // own row through the anon-key SSR client.
-  const { data: operator, error } = await supabase
-    .from("operators")
-    .select(
-      "first_name, last_name, company_name, state, fleet_size, verification_status, created_at"
-    )
-    .eq("auth_user_id", user.id)
-    .maybeSingle();
+  const { operator, error } = await getOperator();
 
   return (
-    <main className="page" style={{ paddingTop: "3rem" }}>
+    <>
       <header className="page-head">
         <span className="eyebrow">Operator dashboard</span>
         <h1 className="page-title">
@@ -53,7 +35,7 @@ export default async function DashboardPage() {
 
       {error && (
         <div className="error">
-          Could not load your operator record: {error.message}
+          Could not load your operator record: {error}
         </div>
       )}
 
@@ -202,6 +184,6 @@ export default async function DashboardPage() {
           build.
         </div>
       </section>
-    </main>
+    </>
   );
 }
