@@ -48,6 +48,9 @@ export default function RootLayout({
             <Link href="/scoreboard" className="btn">
               Public Scoreboard
             </Link>
+            <Link href="/login" className="btn">
+              Sign In
+            </Link>
           </div>
         </header>
         {children}
