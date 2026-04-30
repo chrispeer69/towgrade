@@ -82,33 +82,36 @@ export type Database = {
       }
       admins: {
         Row: {
+          auth_user_id: string | null
           created_at: string
           disabled_at: string | null
           email: string
           full_name: string
           id: string
           last_login_at: string | null
-          password_hash: string
+          password_hash: string | null
           role: string
         }
         Insert: {
+          auth_user_id?: string | null
           created_at?: string
           disabled_at?: string | null
           email: string
           full_name: string
           id?: string
           last_login_at?: string | null
-          password_hash: string
+          password_hash?: string | null
           role?: string
         }
         Update: {
+          auth_user_id?: string | null
           created_at?: string
           disabled_at?: string | null
           email?: string
           full_name?: string
           id?: string
           last_login_at?: string | null
-          password_hash?: string
+          password_hash?: string | null
           role?: string
         }
         Relationships: []
