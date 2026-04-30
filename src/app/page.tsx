@@ -3,15 +3,23 @@ import { createClient } from "@/lib/supabase/server";
 import type { Database } from "@/lib/supabase/types";
 
 type ProviderRow = Database["public"]["Views"]["public_providers"]["Row"];
+type ChipRow = Pick<
+  ProviderRow,
+  "id" | "name" | "aggregate_review_count" | "aggregate_overall_score"
+>;
 
+const CHIP_THRESHOLD = 5;
+
+// Server-rendered. createClient() reads cookies via @supabase/ssr → route
+// is dynamic per request; aggregate scores reflect on next page load.
 export default async function LandingPage() {
   const supabase = await createClient();
   const { data } = await supabase
     .from("public_providers")
-    .select("id,name")
+    .select("id,name,aggregate_review_count,aggregate_overall_score")
     .order("name");
 
-  const providers = (data ?? []) as Pick<ProviderRow, "id" | "name">[];
+  const providers = (data ?? []) as ChipRow[];
 
   return (
     <>
@@ -194,12 +202,23 @@ export default async function LandingPage() {
             operator dashboard.
           </div>
           <div className="pchips">
-            {providers.map((p) => (
-              <div key={p.id ?? p.name} className="pchip">
-                {p.name}
-                <span className="pcs pcs-na">—</span>
-              </div>
-            ))}
+            {providers.map((p) => {
+              const count = p.aggregate_review_count ?? 0;
+              const showScore =
+                count >= CHIP_THRESHOLD && p.aggregate_overall_score != null;
+              return (
+                <div key={p.id ?? p.name} className="pchip">
+                  {p.name}
+                  {showScore ? (
+                    <span className="pcs">
+                      {p.aggregate_overall_score?.toFixed(1)}
+                    </span>
+                  ) : (
+                    <span className="pcs pcs-na">—</span>
+                  )}
+                </div>
+              );
+            })}
             <a
               href="#"
               className="pchip"

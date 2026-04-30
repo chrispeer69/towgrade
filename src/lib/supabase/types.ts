@@ -436,6 +436,9 @@ export type Database = {
       public_providers: {
         Row: {
           abbr: string | null
+          aggregate_overall_score: number | null
+          aggregate_recommend_pct: number | null
+          aggregate_review_count: number | null
           aliases: string[] | null
           brand_color: string | null
           created_at: string | null
@@ -447,6 +450,9 @@ export type Database = {
         }
         Insert: {
           abbr?: string | null
+          aggregate_overall_score?: number | null
+          aggregate_recommend_pct?: number | null
+          aggregate_review_count?: number | null
           aliases?: string[] | null
           brand_color?: string | null
           created_at?: string | null
@@ -458,6 +464,9 @@ export type Database = {
         }
         Update: {
           abbr?: string | null
+          aggregate_overall_score?: number | null
+          aggregate_recommend_pct?: number | null
+          aggregate_review_count?: number | null
           aliases?: string[] | null
           brand_color?: string | null
           created_at?: string | null
