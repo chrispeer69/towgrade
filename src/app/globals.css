@@ -556,6 +556,11 @@ a { color: inherit; text-decoration: none; }
   border-color: var(--signal);
   box-shadow: 0 0 0 3px rgba(26,86,196,.1);
 }
+.fi input:disabled {
+  background: var(--ink-02);
+  color: var(--ink-50);
+  cursor: not-allowed;
+}
 .fi-row {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -1404,6 +1409,40 @@ a { color: inherit; text-decoration: none; }
   letter-spacing: 0.5px;
   text-transform: uppercase;
   color: var(--ink-30);
+}
+
+/* Account profile editing — two stacked cards inside the dashboard shell.
+   Reuses .form-card / .form-body / .fi / .bf from the register/login
+   shared form styles; adds spacing between cards and a per-section
+   header treatment that's a step smaller than the page title. */
+.account-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  max-width: 640px;
+}
+.account-card-head {
+  padding: 18px 24px 14px;
+  border-bottom: var(--border);
+}
+.account-card-head h2 {
+  font-family: var(--font-d);
+  font-size: 22px;
+  font-weight: 600;
+  letter-spacing: -0.2px;
+  color: var(--ink);
+  margin-bottom: 4px;
+}
+.account-card-head p { font-size: 12px; color: var(--ink-50); }
+
+.form-ok {
+  margin-top: 12px;
+  padding: 8px 12px;
+  background: var(--up-lt);
+  color: var(--up);
+  border-radius: var(--r);
+  font-size: 13px;
+  font-weight: 500;
 }
 
 @media (max-width: 767px) {

@@ -2,15 +2,7 @@
 
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
-
-const FLEET_SIZES = ["1-5", "6-20", "21-50", "51-100", "100+"] as const;
-const STATES = [
-  "AL", "AK", "AZ", "AR", "CA", "CO", "CT", "DE", "DC", "FL", "GA", "HI",
-  "ID", "IL", "IN", "IA", "KS", "KY", "LA", "ME", "MD", "MA", "MI", "MN",
-  "MS", "MO", "MT", "NE", "NV", "NH", "NJ", "NM", "NY", "NC", "ND", "OH",
-  "OK", "OR", "PA", "RI", "SC", "SD", "TN", "TX", "UT", "VT", "VA", "WA",
-  "WV", "WI", "WY",
-] as const;
+import { FLEET_SIZES, STATE_CODES } from "@/lib/profile-options";
 
 export type RegisterState =
   | { ok: false; error?: string; fieldErrors?: Record<string, string> }
@@ -39,7 +31,7 @@ export async function registerOperator(
   if (!first_name) fieldErrors.first_name = "Required";
   if (!last_name) fieldErrors.last_name = "Required";
   if (!company_name) fieldErrors.company_name = "Required";
-  if (!STATES.includes(state as (typeof STATES)[number])) {
+  if (!STATE_CODES.includes(state)) {
     fieldErrors.state = "Pick a state";
   }
   if (!FLEET_SIZES.includes(fleet_size as (typeof FLEET_SIZES)[number])) {
