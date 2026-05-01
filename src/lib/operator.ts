@@ -1,6 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 
 export type Operator = {
+  id: string;
   first_name: string;
   last_name: string;
   company_name: string;
@@ -26,7 +27,7 @@ export async function getOperator(): Promise<GetOperatorResult> {
   const { data, error } = await supabase
     .from("operators")
     .select(
-      "first_name, last_name, company_name, state, fleet_size, verification_status, created_at"
+      "id, first_name, last_name, company_name, state, fleet_size, verification_status, created_at"
     )
     .eq("auth_user_id", user.id)
     .maybeSingle();

@@ -1356,6 +1356,55 @@ a { color: inherit; text-decoration: none; }
   max-width: 460px;
   margin: 0 auto;
 }
+.admin-empty__cta {
+  margin-top: 1.5rem;
+  display: flex;
+  justify-content: center;
+}
+.admin-empty__cta .bf {
+  width: auto;
+  display: inline-flex;
+  align-items: center;
+}
+
+/* My Reviews — review-row treatments and status badges. Reuses
+   .admin-card / .admin-table shells. */
+.review-row__score {
+  font-size: 14px;
+  color: var(--ink);
+  font-weight: 500;
+}
+
+.review-badge {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+  padding: 3px 8px;
+  border-radius: 2px;
+  white-space: nowrap;
+}
+.review-badge--public   { background: var(--signal-lt); color: var(--signal-dk); }
+.review-badge--private  { background: var(--ink-05);    color: var(--ink-50); }
+.review-badge--counted  { background: var(--up-lt);     color: var(--up); }
+.review-badge--pending  { background: var(--ink-05);    color: var(--ink-70); }
+.review-badge--rejected { background: var(--down-lt);   color: var(--down); }
+
+.review-edit-link {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--signal);
+  letter-spacing: 0.2px;
+}
+.review-edit-link:hover { color: var(--signal-dk); text-decoration: underline; }
+
+.review-locked {
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  color: var(--ink-30);
+}
 
 @media (max-width: 767px) {
   .admin-table thead { display: none; }
