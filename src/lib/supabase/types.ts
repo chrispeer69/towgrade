@@ -163,6 +163,7 @@ export type Database = {
       }
       operators: {
         Row: {
+          admin_notified_at: string | null
           auth_user_id: string | null
           company_name: string
           created_at: string
@@ -181,6 +182,7 @@ export type Database = {
           verified_by: string | null
         }
         Insert: {
+          admin_notified_at?: string | null
           auth_user_id?: string | null
           company_name: string
           created_at?: string
@@ -199,6 +201,7 @@ export type Database = {
           verified_by?: string | null
         }
         Update: {
+          admin_notified_at?: string | null
           auth_user_id?: string | null
           company_name?: string
           created_at?: string
