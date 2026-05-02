@@ -8,7 +8,7 @@ import {
   type AdminNewOperatorPayload,
 } from "@/lib/emails/admin-new-operator";
 
-const FROM = "TowGrade <noreply@towgrade.com>";
+const FROM = "TowGrade <noreply@send.towgrade.com>";
 
 /**
  * Notify every active admin that a newly-registered operator has confirmed
