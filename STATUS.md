@@ -10,7 +10,7 @@
 | **GitHub repo** | https://github.com/chrispeer69/towgrade (private) |
 | **Supabase project ID** | `aayitixttvijwdjirwea` (region: `us-east-2`) |
 | **Vercel project** | `towgrade` |
-| **Last code commit** | `3585044` — *feat(notifications): per-registration admin notification email via Resend* |
+| **Last code commit** | `ed0e772` — *fix(phase-6-5): send admin notifications from noreply@send.towgrade.com (domain ownership workaround)* |
 | **Branch** | `main` |
 
 ## Database — migrations applied
@@ -51,19 +51,12 @@ Future migrations: `npx supabase db push` (CLI is linked to the remote project).
 - **Phase 4 — Admin verification queue** (`/admin`) — top-level route gated by `getAdmin()` (`src/lib/admin.ts`), which mirrors the operator-fetch pattern. Lists `verification_status='pending'` operators oldest-first as a single editorial table with one-click Approve / Deny actions. Approve sets `verification_status='verified'`, `verified_at=now()`, `verified_by=<admin.id>`. Deny sets `verification_status='rejected'`, `verified_at=null`. Both actions write an audit row to `admin_actions` (`operator.verify` / `operator.reject`). Trigger `trg_operators_verification_propagate` from 0008 fires on status changes and touches every review the operator owns, so the existing per-row `set_counts_in_aggregate` BEFORE trigger recomputes `counts_in_aggregate` retroactively. Sign-out reuses the existing dashboard server action.
 - **Phase 5 — My Reviews list view** (`/dashboard/reviews`) — operators see their submitted reviews with provider name, period, overall score, would-recommend answer, public/private status, and counts-in-aggregate status. Edit affordance routes back to `/dashboard/rate/[slug]` (the rate-a-provider form already detects existing reviews and supports update). Reads via the new `reviews_self_read` policy in 0010, so private and pending-verification reviews are visible to their author even though they're hidden from the public aggregate.
 - **Phase 6 — Account profile editing** (`/dashboard/account`) — operators edit first/last name, company name, state, fleet size, and change password via Supabase Auth. Profile UPDATE is gated by column-level GRANT + RLS in 0011 — the app role can only SET the five editable columns, and Postgres rejects any UPDATE whose SET list touches a privileged column (`email`, `verification_status`, `verified_*`, `auth_user_id`) before RLS even runs. Defense in depth.
-- **Phase 6.5 — Per-registration admin notification email** — when a newly-registered operator confirms their email and lands on `/dashboard` for the first time, every active admin in the `admins` table receives a branded HTML email via Resend with the operator's name, company, state, fleet size, email, registered timestamp, and a CTA to `/admin`. Sent directly from the app via the Resend SDK (separate `RESEND_API_KEY` from the Supabase Auth SMTP credential, so it can be rotated independently). Trigger point is `/auth/callback` after a successful PKCE exchange when `verification_status='pending'` and `admin_notified_at IS NULL`. Atomic claim on `admin_notified_at` (NULL → `now()`) inside `notifyAdminsNewOperator` prevents duplicate emails on repeat confirmation clicks or concurrent callers. Fire-and-forget via `after()` from `next/server` so the operator's redirect to `/dashboard` is never blocked by the email send. Send failures are logged to `console.error` and swallowed; the dedup claim is not rolled back on failure (preventing duplicate spam wins over preserving a retry opportunity).
+- **Phase 6.5 — Per-registration admin notification email** — when a newly-registered operator confirms their email and lands on `/dashboard` for the first time, every active admin in the `admins` table receives a branded HTML email via Resend with the operator's name, company, state, fleet size, email, registered timestamp, and a CTA to `/admin`. Sent directly from the app via the Resend SDK (separate `RESEND_API_KEY` from the Supabase Auth SMTP credential, so it can be rotated independently). Trigger point is `/auth/callback` after a successful PKCE exchange when `verification_status='pending'` and `admin_notified_at IS NULL`. Atomic claim on `admin_notified_at` (NULL → `now()`) inside `notifyAdminsNewOperator` prevents duplicate emails on repeat confirmation clicks or concurrent callers. Fire-and-forget via `after()` from `next/server` so the operator's redirect to `/dashboard` is never blocked by the email send. Send failures are logged to `console.error` and swallowed; the dedup claim is not rolled back on failure (preventing duplicate spam wins over preserving a retry opportunity). Verified in production May 2, 2026. Sends from `noreply@send.towgrade.com` (subdomain workaround — see Known issues for the towgrade.com Resend ownership conflict).
 - **CI/CD** — GitHub → Vercel auto-deploy on push to `main`. Branch previews used for most UI work, but auth-flow features are merged-and-tested in production due to the `NEXT_PUBLIC_SITE_URL` constraint described under Known issues.
 
 ## Tomorrow's first task
 
-**Production verification of Phase 6.5.** Register a fresh test operator (`chris+phase65test@bluecollarai.online`), confirm via the branded email link, and verify:
-
-1. Admin notification email arrives at `chris@bluecollarai.online` with the correct operator details and a working `/admin` CTA.
-2. The operator's `admin_notified_at` column is populated in Supabase.
-3. Clicking the confirm link a second time does NOT fire a duplicate email (atomic dedup claim works).
-4. The new operator appears in the `/admin` verification queue and can be Approved / Denied as usual.
-
-Then continue closed-beta-blocker work — **Phase 6.6 (admin management UI)** or the **mobile responsiveness audit**, whichever I prioritize next.
+Phase 6.5 verified end of day May 2. Next: **Phase 6.6 (admin management UI)** or **mobile responsiveness audit** — Chris will decide.
 
 ## Pre-market backlog (must ship before paid customer access)
 
@@ -72,6 +65,7 @@ Then continue closed-beta-blocker work — **Phase 6.6 (admin management UI)** o
 - **Mobile responsiveness audit** — dashboard nav rail, rate-a-provider form, scoreboard cards, admin queue table on small screens.
 - **Live-wire the marketing hero panel** — currently shows hardcoded illustrative scores ("NSD 7.8 / AAA 7.1 / …"). Wire to `public_providers` aggregates the same way the chip strip is wired.
 - **Per-environment `NEXT_PUBLIC_SITE_URL` in Vercel** — so preview deployments can run the email-confirmation flow against their own preview origin instead of always redirecting back to production. See Known issues.
+- **Unify Resend sender domain.** Once `towgrade.com` is released by the NZ contractor's Resend account and added to ours, switch the Phase 6.5 sender from `noreply@send.towgrade.com` back to `noreply@towgrade.com` so all transactional email comes from a single apex sender.
 
 ## Post-beta product surfaces (paid)
 
@@ -82,6 +76,7 @@ These build after closed beta proves the data flywheel works. Gated to OEM and i
 
 ## Known issues / open items
 
+- **Resend domain ownership conflict on `towgrade.com`.** `towgrade.com` is registered in another Resend account (likely the NZ contractor's account from the abandoned earlier build). Cannot be claimed without that account's owner releasing it. Workaround: `send.towgrade.com` is verified in our Resend account and used as the sender for Phase 6.5 admin notifications. Operator confirmation emails (via Supabase Auth SMTP) still send from `noreply@towgrade.com` because SMTP doesn't validate from-domain against the account's verified domains the way the SDK does — left unchanged to avoid breaking working flow. Real fix: contact NZ contractor to release `towgrade.com` from their Resend account, then unify both senders on the apex domain.
 - **`NEXT_PUBLIC_SITE_URL` hardcodes confirmation email links to production** — the env var is set to `https://www.towgrade.com` in Vercel for all environments, so signup confirmation emails sent from a preview deploy still link the user back to production for the PKCE exchange. The cookie holding the PKCE verifier is on the preview origin, not production, so the exchange fails on the production callback. This structurally blocks preview testing of any auth-flow feature. Workaround in use today: skip preview testing for auth-flow features, merge to main, and verify in production. Real fix: per-environment `NEXT_PUBLIC_SITE_URL` configured in Vercel (Production = `https://www.towgrade.com`; Preview = the preview deployment URL via Vercel system env vars; Development = `http://localhost:3000`).
 - **PKCE same-browser requirement** — the email confirmation link must be clicked in the same browser/device where signup was initiated (PKCE code verifier lives in cookies). Users who click from a different device hit `"PKCE code verifier not found in storage"` and the form surfaces that error. Acceptable tradeoff for the security gain; revisit if user reports become common.
 - **Email confirmation `redirect_to` allowlist must be exact** — Supabase's URI allowlist matches strictly, so we deliberately omit any query string from `emailRedirectTo` (the `/auth/callback` handler defaults `next` to `/dashboard`). Adding query-string variants would require either wildcard allowlist entries or pre-allowlisting each variant.
