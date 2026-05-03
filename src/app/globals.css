@@ -1372,6 +1372,42 @@ a { color: inherit; text-decoration: none; }
   align-items: center;
 }
 
+/* Phase 6.6 — admin tab nav (sits between topbar and main). Reuses
+   the editorial tab treatment from .rtabs/.rtab; only adds horizontal
+   padding so the bar's left edge aligns with .admin-bar / page content. */
+.admin-tabs { padding: 0 2rem; }
+.admin-tabs .rtab {
+  padding: 12px 18px;
+  font-size: 12px;
+  letter-spacing: 0.3px;
+}
+
+/* Phase 6.6 — Add Admin form sits inline above the admin list. The
+   row composes a wide email input next to a sized Add button; on
+   narrow screens it stacks. */
+.admin-add { padding: 18px 22px; margin-bottom: 1.5rem; }
+.admin-add__row {
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+}
+.admin-add__field { flex: 1; margin-bottom: 0; }
+.admin-add__btn {
+  width: auto;
+  margin-top: 22px;       /* aligns with the input baseline (label height) */
+  white-space: nowrap;
+}
+.admin-self {
+  font-family: var(--font-m);
+  font-size: 12px;
+  color: var(--ink-50);
+}
+.admin-list { margin-top: 0; }
+@media (max-width: 600px) {
+  .admin-add__row { flex-direction: column; align-items: stretch; }
+  .admin-add__btn { width: 100%; margin-top: 4px; }
+}
+
 /* My Reviews — review-row treatments and status badges. Reuses
    .admin-card / .admin-table shells. */
 .review-row__score {

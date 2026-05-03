@@ -2,6 +2,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getAdmin } from "@/lib/admin";
 import { signOut } from "@/app/dashboard/actions";
+import AdminTabs from "./AdminTabs";
 
 export default async function AdminLayout({
   children,
@@ -27,6 +28,7 @@ export default async function AdminLayout({
           </form>
         </div>
       </header>
+      <AdminTabs />
       <main className="page admin-main">{children}</main>
     </>
   );
