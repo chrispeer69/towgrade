@@ -1,0 +1,33 @@
+# Dependabot config — npm dependency updates.
+# Docs: https://docs.github.com/en/code-security/dependabot/dependabot-version-updates/configuration-options-for-the-dependabot.yml-file
+#
+# Cadence: weekly. Minor + patch are bundled into one PR per week (across
+# both prod and dev deps) to cut review noise. Majors land as their own
+# PR each — they almost always carry breaking changes that deserve their
+# own review and changelog read.
+
+version: 2
+updates:
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    target-branch: "main"
+    open-pull-requests-limit: 10
+    labels:
+      - "dependencies"
+    commit-message:
+      prefix: "chore(deps)"
+      prefix-development: "chore(deps-dev)"
+      include: "scope"
+    groups:
+      # One PR per week for non-breaking updates across runtime + dev deps.
+      # Anything in the patch or minor range, regardless of dependency-type.
+      minor-and-patch:
+        applies-to: version-updates
+        update-types:
+          - "minor"
+          - "patch"
+    ignore:
+      # Majors are intentionally NOT ignored — they just fall outside the
+      # group above and get their own per-package PR.
