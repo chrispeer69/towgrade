@@ -1,6 +1,6 @@
 # TowGrade — Project Status
 
-**Snapshot:** May 2, 2026 (end of day)
+**Snapshot:** May 3, 2026 (mid-day update)
 
 ## Coordinates
 
@@ -10,12 +10,12 @@
 | **GitHub repo** | https://github.com/chrispeer69/towgrade (private) |
 | **Supabase project ID** | `aayitixttvijwdjirwea` (region: `us-east-2`) |
 | **Vercel project** | `towgrade` |
-| **Last code commit** | `ed0e772` — *fix(phase-6-5): send admin notifications from noreply@send.towgrade.com (domain ownership workaround)* |
+| **Last code commit** | `b44ee53` — *feat(admin): Phase 6.6 — tabbed admin UI with manage admins + audit log* (merge commit). Note: `chore/security-scanning` (Dependabot + CodeQL) also merged today. |
 | **Branch** | `main` |
 
 ## Database — migrations applied
 
-All twelve migrations live in `supabase/migrations/` and tracked by the Supabase CLI as applied to the remote project. `supabase migration list` shows Local and Remote in sync.
+All thirteen migrations live in `supabase/migrations/` and tracked by the Supabase CLI as applied to the remote project. `supabase migration list` shows Local and Remote in sync.
 
 | | File | Purpose |
 |---|---|---|
@@ -31,6 +31,7 @@ All twelve migrations live in `supabase/migrations/` and tracked by the Supabase
 | 0010 | `0010_reviews_self_read.sql` | `reviews_self_read` RLS policy so an authenticated operator can read every review they submitted regardless of `is_public` / `counts_in_aggregate` / their own verification_status. Complements (does not replace) `reviews_public_aggregate_read` from 0003 — Postgres OR's RLS policies. Required for the My Reviews list to show private and pending-verification reviews. |
 | 0011 | `0011_operators_self_update.sql` | Column-level `GRANT UPDATE (first_name, last_name, company_name, state, fleet_size) ON operators TO authenticated` plus matching `operators_self_update` RLS policy (USING + WITH CHECK on `auth_user_id = auth.uid()`). Column-level privilege is the load-bearing protection — Postgres rejects any UPDATE whose SET list touches a column the role lacks privilege on, before RLS runs, so `email` / `verification_status` / `verified_*` / `auth_user_id` are structurally unreachable from the app role. |
 | 0012 | `0012_operators_admin_notified.sql` | `operators.admin_notified_at timestamptz` column for atomic dedup of the per-registration admin notification email (Phase 6.5). Set in a single UPDATE with `IS NULL` guard inside `notifyAdminsNewOperator`; concurrent or repeat callers see the column already set and exit silently. No index — column is read/written per-operator by primary key only. |
+| 0013 | `0013_admin_management.sql` | Extended `admin_actions.action` CHECK to allow `admin.add` / `admin.remove`; relaxed `admin_actions.admin_id` to nullable + ON DELETE SET NULL so admins with audit history can be removed without an FK violation (audit rows survive with `admin_id = NULL`, rendered as "(removed)"); BEFORE DELETE trigger `trg_admins_block_last_delete` raises `check_violation` if removing the last admin where `disabled_at IS NULL`. No new RLS or GRANTs — Manage Admins + Audit Log surfaces both go through the service-role client (Phase 4 pattern). |
 
 Future migrations: `npx supabase db push` (CLI is linked to the remote project).
 
@@ -52,17 +53,17 @@ Future migrations: `npx supabase db push` (CLI is linked to the remote project).
 - **Phase 5 — My Reviews list view** (`/dashboard/reviews`) — operators see their submitted reviews with provider name, period, overall score, would-recommend answer, public/private status, and counts-in-aggregate status. Edit affordance routes back to `/dashboard/rate/[slug]` (the rate-a-provider form already detects existing reviews and supports update). Reads via the new `reviews_self_read` policy in 0010, so private and pending-verification reviews are visible to their author even though they're hidden from the public aggregate.
 - **Phase 6 — Account profile editing** (`/dashboard/account`) — operators edit first/last name, company name, state, fleet size, and change password via Supabase Auth. Profile UPDATE is gated by column-level GRANT + RLS in 0011 — the app role can only SET the five editable columns, and Postgres rejects any UPDATE whose SET list touches a privileged column (`email`, `verification_status`, `verified_*`, `auth_user_id`) before RLS even runs. Defense in depth.
 - **Phase 6.5 — Per-registration admin notification email** — when a newly-registered operator confirms their email and lands on `/dashboard` for the first time, every active admin in the `admins` table receives a branded HTML email via Resend with the operator's name, company, state, fleet size, email, registered timestamp, and a CTA to `/admin`. Sent directly from the app via the Resend SDK (separate `RESEND_API_KEY` from the Supabase Auth SMTP credential, so it can be rotated independently). Trigger point is `/auth/callback` after a successful PKCE exchange when `verification_status='pending'` and `admin_notified_at IS NULL`. Atomic claim on `admin_notified_at` (NULL → `now()`) inside `notifyAdminsNewOperator` prevents duplicate emails on repeat confirmation clicks or concurrent callers. Fire-and-forget via `after()` from `next/server` so the operator's redirect to `/dashboard` is never blocked by the email send. Send failures are logged to `console.error` and swallowed; the dedup claim is not rolled back on failure (preventing duplicate spam wins over preserving a retry opportunity). Verified in production May 2, 2026. Sends from `noreply@send.towgrade.com` (subdomain workaround — see Known issues for the towgrade.com Resend ownership conflict).
+- **Phase 6.6 — Tabbed admin UI** (`/admin`, `/admin/admins`, `/admin/audit`) — the verification queue moved into a tabbed editorial shell alongside Manage Admins and Audit Log. Tabs are routes (not client state) so each is server-rendered with its own metadata and service-role data fetch. Manage Admins lists current admins (email, name, added date) with an inline Add Admin form (email lookup against `auth.users` via `listUsers`; "No registered user…" / "Already an admin." surfaced inline) and a Remove button per row (`window.confirm` → service-role delete + audit row). Self-removal is hidden in the UI ("(you)") and blocked server-side. Last-active-admin removal is blocked at the DB level by the BEFORE DELETE trigger from 0013 (`check_violation` 23514) — belt-and-suspenders alongside the Server Action's pre-check. Audit Log renders the most recent 50 `admin_actions` rows with batched email lookups for actor + target; tolerates dangling pointers (actor renders as "(removed)" if `admin_id` went NULL via the FK relax; admin target falls back to the `metadata.email` snapshot). All admin self-management actions write to `admin_actions` (`admin.add` / `admin.remove`). Verified in production May 3, 2026.
+- **Security scanning** — Dependabot (weekly grouped npm updates: minor + patch bundled into one PR per week, majors separate) and CodeQL (push to `main`, PR to `main`, weekly cron Mondays 06:37 UTC, `javascript-typescript` language, default query suite) enabled May 3, 2026.
 - **CI/CD** — GitHub → Vercel auto-deploy on push to `main`. Branch previews used for most UI work, but auth-flow features are merged-and-tested in production due to the `NEXT_PUBLIC_SITE_URL` constraint described under Known issues.
 
 ## Tomorrow's first task
 
-Phase 6.5 verified end of day May 2. Next: **Phase 6.6 (admin management UI)** or **mobile responsiveness audit** — Chris will decide.
+Mobile responsiveness audit confirmed acceptable on May 3 (no fixes needed). Closed-beta blockers remaining: forgot-password and magic-link branded templates, per-environment `NEXT_PUBLIC_SITE_URL`, live-wire marketing hero panel, unify Resend sender domain. Chris will pick which to tackle next.
 
 ## Pre-market backlog (must ship before paid customer access)
 
-- **Phase 6.6 — Admin management UI** — admin-add-admin, admin-remove-admin, admin audit log view. The first admin is seeded via SQL in 0008; that bootstrapping shortcut needs a proper UI before market launch.
 - **Forgot-password and magic-link sign-in** — both with branded Resend templates to match the confirmation email.
-- **Mobile responsiveness audit** — dashboard nav rail, rate-a-provider form, scoreboard cards, admin queue table on small screens.
 - **Live-wire the marketing hero panel** — currently shows hardcoded illustrative scores ("NSD 7.8 / AAA 7.1 / …"). Wire to `public_providers` aggregates the same way the chip strip is wired.
 - **Per-environment `NEXT_PUBLIC_SITE_URL` in Vercel** — so preview deployments can run the email-confirmation flow against their own preview origin instead of always redirecting back to production. See Known issues.
 - **Unify Resend sender domain.** Once `towgrade.com` is released by the NZ contractor's Resend account and added to ours, switch the Phase 6.5 sender from `noreply@send.towgrade.com` back to `noreply@towgrade.com` so all transactional email comes from a single apex sender.
