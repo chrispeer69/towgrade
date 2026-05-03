@@ -1,0 +1,49 @@
+# CodeQL — static analysis for JavaScript / TypeScript.
+# Docs: https://docs.github.com/en/code-security/code-scanning
+#
+# Triggers: push to main, PRs targeting main, and a weekly cron so a
+# stale branch can't sit unscanned indefinitely. The cron hour is
+# offset from the top of the hour to avoid hot-spot scheduling on
+# GitHub-hosted runners.
+
+name: CodeQL
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+  schedule:
+    - cron: "37 6 * * 1"  # Mondays at 06:37 UTC
+
+jobs:
+  analyze:
+    name: Analyze (${{ matrix.language }})
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+    permissions:
+      actions: read
+      contents: read
+      security-events: write
+
+    strategy:
+      fail-fast: false
+      matrix:
+        language: [ "javascript-typescript" ]
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v3
+        with:
+          languages: ${{ matrix.language }}
+          # `default` = the default query suite. Swap to `security-extended`
+          # later if we want broader (slower) coverage.
+          queries: default
+
+      - name: Perform CodeQL analysis
+        uses: github/codeql-action/analyze@v3
+        with:
+          category: "/language:${{ matrix.language }}"
