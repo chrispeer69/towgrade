@@ -3,6 +3,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { FLEET_SIZES, STATE_CODES } from "@/lib/profile-options";
+import { getSiteUrl } from "@/lib/site-url";
 
 export type RegisterState =
   | { ok: false; error?: string; fieldErrors?: Record<string, string> }
@@ -54,7 +55,6 @@ export async function registerOperator(
   // the email link returns. The admin client (persistSession=false) can't
   // round-trip the verifier and breaks email confirmation.
   const supabase = await createClient();
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
 
   const { data: signup, error: signupError } = await supabase.auth.signUp({
     email,
@@ -62,7 +62,7 @@ export async function registerOperator(
     options: {
       // No query string — Supabase's URI allowlist matches strictly, and the
       // /auth/callback route handler already defaults `next` to /dashboard.
-      emailRedirectTo: `${siteUrl}/auth/callback`,
+      emailRedirectTo: `${getSiteUrl()}/auth/callback`,
       data: { first_name, last_name, company_name },
     },
   });

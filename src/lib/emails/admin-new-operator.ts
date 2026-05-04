@@ -1,4 +1,5 @@
 import "server-only";
+import { getSiteUrl } from "@/lib/site-url";
 
 export type AdminNewOperatorPayload = {
   firstName: string;
@@ -10,7 +11,9 @@ export type AdminNewOperatorPayload = {
   registeredAt: Date;
 };
 
-const ADMIN_URL = "https://www.towgrade.com/admin";
+function adminUrl(): string {
+  return `${getSiteUrl()}/admin`;
+}
 
 export function buildAdminNewOperatorSubject(p: AdminNewOperatorPayload): string {
   return `New TowGrade operator pending verification: ${p.companyName}`;
@@ -53,6 +56,7 @@ export function buildAdminNewOperatorHtml(p: AdminNewOperatorPayload): string {
   const fleetSize = escapeHtml(p.fleetSize);
   const email = escapeHtml(p.email);
   const registeredAt = escapeHtml(formatRegisteredAt(p.registeredAt));
+  const ADMIN_URL = escapeHtml(adminUrl());
 
   return `<!DOCTYPE html>
 <html lang="en">
@@ -160,7 +164,7 @@ export function buildAdminNewOperatorText(p: AdminNewOperatorPayload): string {
     `Email:       ${p.email}`,
     `Registered:  ${registeredAt}`,
     "",
-    `Review in admin queue: ${ADMIN_URL}`,
+    `Review in admin queue: ${adminUrl()}`,
     "",
     "—",
     "You received this notification because you are an administrator on TowGrade. Operator details are confidential — handle accordingly.",
