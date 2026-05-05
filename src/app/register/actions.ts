@@ -3,7 +3,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { FLEET_SIZES, STATE_CODES } from "@/lib/profile-options";
-import { getSiteUrl } from "@/lib/site-url";
+import { getRequestOrigin } from "@/lib/site-url";
 
 export type RegisterState =
   | { ok: false; error?: string; fieldErrors?: Record<string, string> }
@@ -62,7 +62,7 @@ export async function registerOperator(
     options: {
       // No query string — Supabase's URI allowlist matches strictly, and the
       // /auth/callback route handler already defaults `next` to /dashboard.
-      emailRedirectTo: `${getSiteUrl()}/auth/callback`,
+      emailRedirectTo: `${await getRequestOrigin()}/auth/callback`,
       data: { first_name, last_name, company_name },
     },
   });
